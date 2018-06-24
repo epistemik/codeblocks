@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1298319249 source:/home/marksa/dev/CodeBlocks/Cproj/Sim68k/Sim68k.c
+	"SimUnit.h"
+
+1318786111 /home/marksa/dev/CodeBlocks/Cproj/Sim68k/SimUnit.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<ctype.h>
+

@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1319291645 source:/home/marksa/dev/CodeBlocks/CPP/Knapsack/Knapsack.cpp
+	<algorithm>
+	<unistd.h>
+	<cstring>
+	<fstream>
+	<sstream>
+	"Knapitems.hpp"
+
+1319291864 /home/marksa/dev/CodeBlocks/CPP/Knapsack/Knapitems.hpp
+	<cstdlib>
+	<iostream>
+	<string>
+	<queue>
+	<vector>
+	<iomanip>
+

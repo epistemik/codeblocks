@@ -1,0 +1,23 @@
+<html>
+<head>
+<title>Heap build log</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>
+<body>
+<tt>
+Build started on: <u>11-11-2011 at 07:50.09</u><br />
+Build ended on: <u>11-11-2011 at 07:50.09</u><p />
+<b>-------------- Build: Debug in Heap ---------------</b><br />
+g++ -Wall -fexceptions  -g  -O2 -Wredundant-decls -Wundef -Wunreachable-code -Wmissing-include-dirs -Wmain -Wall -g    -c /home/marksa/dev/CodeBlocks/CPP/Heap/ArrayHeap.cpp -o obj/Debug/ArrayHeap.o<br />
+g++ -Wall -fexceptions  -g  -O2 -Wredundant-decls -Wundef -Wunreachable-code -Wmissing-include-dirs -Wmain -Wall -g    -c /home/marksa/dev/CodeBlocks/CPP/Heap/Heap.cpp -o obj/Debug/Heap.o<br />
+g++ -Wall -fexceptions  -g  -O2 -Wredundant-decls -Wundef -Wunreachable-code -Wmissing-include-dirs -Wmain -Wall -g    -c /home/marksa/dev/CodeBlocks/CPP/Heap/Instance.cpp -o obj/Debug/Instance.o<br />
+g++ -Wall -fexceptions  -g  -O2 -Wredundant-decls -Wundef -Wunreachable-code -Wmissing-include-dirs -Wmain -Wall -g    -c /home/marksa/dev/CodeBlocks/CPP/Heap/LinkHeap.cpp -o obj/Debug/LinkHeap.o<br />
+g++ -Wall -fexceptions  -g  -O2 -Wredundant-decls -Wundef -Wunreachable-code -Wmissing-include-dirs -Wmain -Wall -g    -c /home/marksa/dev/CodeBlocks/CPP/Heap/Main.cpp -o obj/Debug/Main.o<br />
+g++  -o bin/Debug/Heap obj/Debug/ArrayHeap.o obj/Debug/Heap.o obj/Debug/Instance.o obj/Debug/LinkHeap.o obj/Debug/Main.o obj/Debug/Test.o<br />
+obj/Debug/Main.o: In function `main':<br />
+<font color="#ff0000">/home/marksa/dev/CodeBlocks/CPP/Heap/Main.cpp:102: undefined reference to `Heap<TestType>::vide() const'</font><br />
+collect2: ld returned 1 exit status<br />
+<font color="#a00000">Process terminated with status 1 (0 minutes, 0 seconds)</font><br />
+<font color="#a00000">1 errors, 0 warnings (0 minutes, 0 seconds)</font><br />
+</tt>
+</body>
+</html>

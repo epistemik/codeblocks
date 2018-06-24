@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1318175550 source:/home/marksa/dev/CodeBlocks/Knapsack/knapsack.c
+	"node.h"
+
+1318175420 /home/marksa/dev/CodeBlocks/Knapsack/node.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+
+1318175420 source:/home/marksa/dev/CodeBlocks/Knapsack/node.c
+	"node.h"
+

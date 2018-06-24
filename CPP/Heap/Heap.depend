@@ -1,0 +1,51 @@
+# depslib dependency file v1.0
+1296251951 source:/home/marksa/dev/CodeBlocks/CPP/Heap/ArrayHeap.cpp
+	"ArrayHeap.hpp"
+
+1321015355 /home/marksa/dev/CodeBlocks/CPP/Heap/ArrayHeap.hpp
+	<iostream>
+	"Heap.hpp"
+
+1321015807 /home/marksa/dev/CodeBlocks/CPP/Heap/Heap.hpp
+	<iostream>
+
+1296253042 source:/home/marksa/dev/CodeBlocks/CPP/Heap/Heap.cpp
+	"Heap.hpp"
+
+1296174268 source:/home/marksa/dev/CodeBlocks/CPP/Heap/Instance.cpp
+	"Test.hpp"
+	"Heap.cpp"
+	"ArrayHeap.cpp"
+	"LinkHeap.cpp"
+
+1321015355 /home/marksa/dev/CodeBlocks/CPP/Heap/Test.hpp
+	<iostream>
+
+1321015807 /home/marksa/dev/CodeBlocks/CPP/Heap/Heap.cpp
+	"Heap.hpp"
+
+1321015807 /home/marksa/dev/CodeBlocks/CPP/Heap/ArrayHeap.cpp
+	"ArrayHeap.hpp"
+
+1321015807 /home/marksa/dev/CodeBlocks/CPP/Heap/LinkHeap.cpp
+	"LinkHeap.hpp"
+
+1321015355 /home/marksa/dev/CodeBlocks/CPP/Heap/LinkHeap.hpp
+	<iostream>
+	"Heap.hpp"
+
+1296254137 source:/home/marksa/dev/CodeBlocks/CPP/Heap/LinkHeap.cpp
+	"LinkHeap.hpp"
+
+1296237609 source:/home/marksa/dev/CodeBlocks/CPP/Heap/Test.cpp
+	"Test.hpp"
+
+1321014959 source:/home/marksa/dev/CodeBlocks/CPP/Heap/Main.cpp
+	<cstdlib>
+	<iostream>
+	<libgen.h>
+	"Test.hpp"
+	"Heap.hpp"
+	"ArrayHeap.hpp"
+	"LinkHeap.hpp"
+

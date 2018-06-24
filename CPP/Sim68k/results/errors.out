@@ -1,0 +1,121 @@
+
+Your Option : e
+Name of the 68k binary program (".68b" will be added automatically): input\errors
+Program loaded. 112 bytes in memory.
+Enter a value (byte) for the register D0: 1
+*** ERROR *** Invalid number of operands for (ADDQ) at address PC = 0044
+
+End of program Execution.
+Your Option : e
+Name of the 68k binary program (".68b" will be added automatically): input\errors
+Program loaded. 112 bytes in memory.
+Enter a value (byte) for the register D0: 9
+Enter a value (byte) for the register D0: 33
+Enter a value (byte) for the register D0: 2
+*** ERROR *** Invalid Data Size for BRA at address $004C
+
+End of program Execution.
+
+Press <Enter>.
+
+*** Sim68k ***
+
+Project CSI 2111 (November 1999).
+FirstName LastName: #StudentNumber
+-------------------------------------
+Tu        Nguyen    555104
+Mark      Sattolo   428500
+Thuy      Nguyen    1768590
+-------------------------------------
+
+Menu:
+(e)xecute <file.68b>
+(q)uit the simulator
+
+
+Your Option : e
+Name of the 68k binary program (".68b" will be added automatically): input\errors
+Program loaded. 112 bytes in memory.
+Enter a value (byte) for the register D0: 3
+*** ERROR *** Invalid Addressing Mode for BRA at address $0052
+
+End of program Execution.
+
+Press <Enter>.
+Your Option : e
+Name of the 68k binary program (".68b" will be added automatically): input\errors
+Program loaded. 112 bytes in memory.
+Enter a value (byte) for the register D0: 4
+*** ERROR *** Invalid Addressing Mode for MOVEA at address $005A
+
+End of program Execution.
+
+Press <Enter>.
+
+*** Sim68k ***
+
+Project CSI 2111 (November 1999).
+FirstName LastName: #StudentNumber
+-------------------------------------
+Tu        Nguyen    555104
+Mark      Sattolo   428500
+Thuy      Nguyen    1768590
+-------------------------------------
+
+Menu:
+(e)xecute <file.68b>
+(q)uit the simulator
+
+
+Your Option : e
+Name of the 68k binary program (".68b" will be added automatically): input\errors
+Program loaded. 112 bytes in memory.
+Enter a value (byte) for the register D0: 5
+*** ERROR *** Invalid Addressing Mode for MOVEA at address $0060
+
+End of program Execution.
+
+Press <Enter>.
+Menu:
+(e)xecute <file.68b>
+(q)uit the simulator
+
+
+Your Option : e
+Name of the 68k binary program (".68b" will be added automatically): input\errors
+Program loaded. 112 bytes in memory.
+Enter a value (byte) for the register D0: 6
+*** ERROR *** Division by Zero for DIVS at address $0068
+
+End of program Execution.
+
+Press <Enter>.
+
+*** Sim68k ***
+
+Project CSI 2111 (November 1999).
+FirstName LastName: #StudentNumber
+-------------------------------------
+Tu        Nguyen    555104
+Mark      Sattolo   428500
+Thuy      Nguyen    1768590
+-------------------------------------
+
+Menu:
+(e)xecute <file.68b>
+(q)uit the simulator
+
+
+Your Option : e
+Name of the 68k binary program (".68b" will be added automatically): input\errors
+Program loaded. 112 bytes in memory.
+Enter a value (byte) for the register D0: 0
+Enter a value (byte) for the register D0: -1
+Enter a value (byte) for the register D0: $ff
+Enter a value (byte) for the register D0: 7
+Enter a value (byte) for the register D0: 1
+*** ERROR *** Invalid number of operands for (ADDQ) at address PC = 0044
+
+End of program Execution.
+
+Press <Enter>.
