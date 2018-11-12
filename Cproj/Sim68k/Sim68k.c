@@ -7,10 +7,12 @@
  *   $File: //depot/Eclipse/CPP/Workspace/Sim68k/src/Sim68k.c $
  *   $Revision: #23 $
  *   $Change: 114 $
- *   $DateTime: 2011/02/21 15:14:53 $   
+ *   $DateTime: 2011/02/21 15:14:53 $
+ *
+ *   UPDATED Nov 12, 2018
  */
 
-#include "SimUnit.h" // Library containing useful functions
+#include "SimUnit.h" // Library containing useful variables and functions
 
 /*
  *  VARIABLES
@@ -221,14 +223,14 @@ void DecodeInstr()
     }  
 }// DecodeInstr()
 
-// Fetch the operands, according to their number (numOprd) & addressing modes (M1 or M2)
+// Fetch the operands, according to their number (as stored in variable 'numOprd') and addressing modes (M1 or M2)
 void FetchOperands()
 {
   if( nDebugLevel > 0 ) printf( "FetchOperands(%d): at PC = %d : M1 = %d, M2 = %d\n", numOprd, (PC-2), M1, M2 );
   
   RW = Read ;
   
-  // Fetch the address of 1st operand (in OpAddr1)
+  // Fetch the address of 1st operand and store in OpAddr1
   if( FormatF1(OpId) && (M1 == RELATIVE_ABSOLUTE) )
   {
     MAR = PC ;
@@ -237,8 +239,8 @@ void FetchOperands()
     PC = PC + 2 ;
   }
   
-  // Fetch the address of 2nd operand, if F1 & 2 operands.
-  // OR, operand of an instruction with format F2 put in OpAddr2
+  // Fetch: the address of 2nd operand, if F1 & 2 operands OR: operand of an instruction with format F2.
+  // store in OpAddr2
   if( M2 == RELATIVE_ABSOLUTE )
   {
     MAR = PC ;
@@ -460,8 +462,8 @@ void ExecInstr()
                FillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
                // 3. Compute TMPR using TMPS & TMPD  
                TMPR = TMPS + TMPD ;
-               if( nDebugLevel > 0 ) printf( "TMPR = %#X(%d), TMPS = %#X(%d), TMPD = %#X(%d)\n",
-                                             TMPR, TMPR, TMPS, TMPS, TMPD, TMPD );
+               if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPS(%#X|%d) + TMPD(%#X|%d)\n",
+                                              TMPR, TMPR, TMPS, TMPS, TMPD, TMPD );
                // 4. Update status bits HZNVC if necessary  
                SetZN( TMPR );
                SetSmDmRm( TMPS, TMPD, TMPR );
@@ -477,8 +479,8 @@ void ExecInstr()
                 SetByte( &TMPS, 0, opcData );
                 // Sign extension if W or L ??
                 TMPR = TMPD + TMPS ;
-                if( nDebugLevel > 0 ) printf( "TMPR = %#X(%d), TMPS = %#X(%d), TMPD = %#X(%d)\n",
-                                              TMPR, TMPR, TMPS, TMPS, TMPD, TMPD );
+                if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) + TMPS(%#X|%d)\n",
+                                               TMPR, TMPR, TMPD, TMPD, TMPS, TMPS );
                 SetZN( TMPR );
                 SetSmDmRm( TMPS, TMPD, TMPR );
                 V = ( Sm & Dm & ~Rm ) | ( ~Sm & ~Dm & Rm );
@@ -490,6 +492,8 @@ void ExecInstr()
                FillTmpReg( &TMPS, OpAddr1, DS, M1, R1 );
                FillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
                TMPR = TMPD - TMPS ;
+               if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) - TMPS(%#X|%d)\n",
+                                              TMPR, TMPR, TMPD, TMPD, TMPS, TMPS );
                SetZN( TMPR );
                SetSmDmRm( TMPS, TMPD, TMPR );
                V = ( ~Sm & Dm & ~Rm ) | ( Sm & ~Dm & Rm );
@@ -503,6 +507,8 @@ void ExecInstr()
                 SetByte( &TMPS, 0, opcData );
                 // Sign extension if W or L ??
                 TMPR = TMPD - TMPS;
+                if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) + TMPS(%#X|%d)\n",
+                                               TMPR, TMPR, TMPD, TMPD, TMPS, TMPS );
                 SetZN( TMPR );
                 SetSmDmRm( TMPS, TMPD, TMPR );
                 V = ( ~Sm & Dm & ~Rm ) | ( Sm & ~Dm & Rm );
@@ -520,6 +526,8 @@ void ExecInstr()
                   if( GetBits(TMPD,15,15) == 1 )
                     TMPD = TMPD | 0xFFFF0000 ;
                   TMPR = TMPD * TMPS;
+                  if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) * TMPS(%#X|%d)\n",
+                                                 TMPR, TMPR, TMPD, TMPD, TMPS, TMPS );
                   SetZN( TMPR );
                   V = False;
                   C = False;
@@ -552,6 +560,8 @@ void ExecInstr()
                         TMPR = TMPD / GetWord(TMPS, Least);
                         SetWord( &TMPR, Most, (TMPD % GetWord(TMPS, Least)) );
                       };
+                    if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) / TMPS(%#X|%d)\n",
+                                                   TMPR, TMPR, TMPD, TMPD, TMPS, TMPS );
                     SetZN( TMPR );
                     C = False ;
                     SetResult( &TMPR, OpAddr2, DS, M2, R2 );
@@ -562,6 +572,8 @@ void ExecInstr()
      case iNEG:
                FillTmpReg( &TMPD, OpAddr1, DS, M1, R1 );
                TMPR = -TMPD;
+               if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = -TMPD(%#X|%d) \n",
+                                              TMPR, TMPR, TMPD, TMPD );
                SetZN( TMPR );
                SetSmDmRm( TMPS, TMPD, TMPR );
                V = Dm & Rm ;
@@ -580,6 +592,8 @@ void ExecInstr()
      case iNOT:
                FillTmpReg( &TMPD, OpAddr1, DS, M1, R1 );
                TMPR = ~TMPD ;
+               if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = ~TMPD(%#X|%d) \n",
+                                              TMPR, TMPR, TMPD, TMPD );
                SetZN( TMPR );
                V = False;
                C = False;
@@ -590,6 +604,8 @@ void ExecInstr()
                FillTmpReg( &TMPS, OpAddr1, DS, M1, R1 );
                FillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
                TMPR = TMPD & TMPS ;
+               if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) & TMPS(%#X|%d)\n",
+                                              TMPR, TMPR, TMPD, TMPD, TMPS, TMPS );
                SetZN( TMPR );
                V = False;
                C = False;
@@ -600,6 +616,8 @@ void ExecInstr()
               FillTmpReg( &TMPS, OpAddr1, DS, M1, R1 );
               FillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
               TMPR = TMPD | TMPS ;
+              if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) | TMPS(%#X|%d)\n",
+                                             TMPR, TMPR, TMPD, TMPD, TMPS, TMPS );
               SetZN( TMPR );
               V = False;
               C = False;
@@ -610,6 +628,8 @@ void ExecInstr()
                FillTmpReg( &TMPS, OpAddr1, DS, M1, R1 );
                FillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
                TMPR = TMPD ^ TMPS;
+               if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) ^ TMPS(%#X|%d)\n",
+                                              TMPR, TMPR, TMPD, TMPD, TMPS, TMPS );
                SetZN( TMPR );
                V = False;
                C = False;
@@ -619,6 +639,8 @@ void ExecInstr()
      case iLSL:
                FillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
                TMPR = TMPD << opcData;
+               if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) << opcData(%d) \n",
+                                              TMPR, TMPR, TMPD, TMPD, opcData );
                SetZN( TMPR );
                V = False;
                if( opcData > 0 )
@@ -638,13 +660,14 @@ void ExecInstr()
                // TMPR = TMPS & ~( 0x80000000 >> (opcData-1) ) as the constant 0x80000000 is NOT extended
                // Instead, need to put 0x80000000 in a register and proceed as below:
                FillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
-               if( nDebugLevel > 0 ) printf( "TMPD = %08x; opcData = %d\n", TMPD, opcData );
                TMPS = 0x80000000 ;
+               if( nDebugLevel > 0 ) printf( "TMPD = %08x; TMPS = %08x; opcData = %d \n", TMPD, TMPS, opcData );
                TMPR = TMPS >> (opcData-1) ;
-               if( nDebugLevel > 0 ) printf( "TMPS = %08x; TMPR = TMPS >> %d = %08x\n", TMPS, opcData-1, TMPR );
+               if( nDebugLevel > 0 ) printf( "TMPR(%08x) = TMPS(%08x) >> %d \n", TMPR, TMPS, opcData-1 );
                TMPS = ~TMPR ;
-               if( nDebugLevel > 0 ) printf( "TMPS = ~TMPR = %08x\n", TMPS );
+               if( nDebugLevel > 0 ) printf( "TMPS(%08x) = ~TMPR(%08x) \n", TMPS, TMPR );
                TMPR = (TMPD >> opcData) & TMPS ;
+               if( nDebugLevel > 0 ) printf( "TMPR(%08x) = (TMPD(%08x) >> %d) & TMPS(%08x) \n", TMPR, TMPD, opcData, TMPS );
                SetZN( TMPR );
                V = False;
                C = ( opcData > 0 ) ? ( GetBits(TMPD, opcData-1, opcData-1) == 1 ) : False ;

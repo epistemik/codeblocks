@@ -1,0 +1,854 @@
+sizeof( char ) == 1
+sizeof( short ) == 2
+sizeof( int ) == 4
+sizeof( long ) == 8
+sizeof( bit ) == 4
+sizeof( rwbit ) == 4
+sizeof( dataSize ) == 4
+sizeof( numOperands ) == 4
+sizeof( boolean ) == 1
+sizeof( string ) == 8
+sizeof( byte ) == 4
+sizeof( word ) == 4
+Your Option ('e' to execute a program, 'q' to quit): e
+Name of the 68k binary program ('.68b' will be added automatically): /home/marksa/dev/CodeBlocks/Cproj/Sim68k/in/arith
+Read value 92 into memory
+Read value 60 into memory
+Read value 0 into memory
+Read value 14 into memory
+Read value 43 into memory
+Read value 34 into memory
+Read value 56 into memory
+Read value 78 into memory
+Read value ff into memory
+Read value ff into memory
+Read value 90 into memory
+Read value ab into memory
+Read value ff into memory
+Read value ff into memory
+Read value cd into memory
+Read value ef into memory
+Read value 0 into memory
+Read value 0 into memory
+Read value 0 into memory
+Read value f6 into memory
+Read value 1 into memory
+Read value 66 into memory
+Read value 0 into memory
+Read value 4 into memory
+Read value 0 into memory
+Read value 6 into memory
+Read value f0 into memory
+Read value 0 into memory
+Read value ea into memory
+Read value 60 into memory
+Read value 0 into memory
+Read value 6 into memory
+Read value 3 into memory
+Read value 66 into memory
+Read value 0 into memory
+Read value 4 into memory
+Read value 0 into memory
+Read value 6 into memory
+Read value f0 into memory
+Read value 0 into memory
+Read value ea into memory
+Read value 60 into memory
+Read value 0 into memory
+Read value 6 into memory
+Read value c5 into memory
+Read value 60 into memory
+Read value 0 into memory
+Read value 10 into memory
+Read value 8 into memory
+Read value a0 into memory
+Read value f0 into memory
+Read value 0 into memory
+Read value ec into memory
+Read value 0 into memory
+Read value c5 into memory
+Read value 60 into memory
+Read value 0 into memory
+Read value 10 into memory
+Read value a into memory
+Read value a0 into memory
+Read value f0 into memory
+Read value 0 into memory
+Read value ec into memory
+Read value 0 into memory
+Read value 5 into memory
+Read value 66 into memory
+Read value 0 into memory
+Read value 8 into memory
+Read value 0 into memory
+Read value c into memory
+Read value f0 into memory
+Read value 0 into memory
+Read value ec into memory
+Read value 60 into memory
+Read value 0 into memory
+Read value c into memory
+Read value e4 into memory
+Read value 10 into memory
+Read value 15 into memory
+Read value 66 into memory
+Read value 0 into memory
+Read value 8 into memory
+Read value 0 into memory
+Read value c into memory
+Read value ec into memory
+Read value 60 into memory
+Read value 0 into memory
+Read value c into memory
+Read value 1c into memory
+Read value a0 into memory
+Read value ec into memory
+Read value 0 into memory
+Read value c5 into memory
+Read value 60 into memory
+Read value 0 into memory
+Read value 10 into memory
+Read value 8 into memory
+Read value a0 into memory
+Read value 18 into memory
+Read value a0 into memory
+Read value ec into memory
+Read value 0 into memory
+Read value 13 into memory
+Read value 66 into memory
+Read value 0 into memory
+Read value 4 into memory
+Read value 0 into memory
+Read value 6 into memory
+Read value ea into memory
+Read value 60 into memory
+Read value 0 into memory
+Read value 6 into memory
+Read value 11 into memory
+Read value 66 into memory
+Read value 0 into memory
+Read value 4 into memory
+Read value 0 into memory
+Read value 6 into memory
+Read value ea into memory
+Read value 60 into memory
+Read value 0 into memory
+Read value 6 into memory
+Read value f0 into memory
+Read value 0 into memory
+Read value e4 into memory
+Read value 10 into memory
+Read value cc into memory
+Read value 30 into memory
+Read value 34 into memory
+Read value 0 into memory
+Read value ec into memory
+Read value 0 into memory
+Read value 32 into memory
+Read value 0 into memory
+Read value ec into memory
+Read value 0 into memory
+Read value 30 into memory
+Read value 0 into memory
+Read value ec into memory
+Read value 0 into memory
+Read value 30 into memory
+Read value 0 into memory
+Read value ec into memory
+Read value 0 into memory
+Read value f0 into memory
+Read value 0 into memory
+Read value e4 into memory
+Read value 10 into memory
+Read value e2 into memory
+Read value 0 into memory
+Read value e2 into memory
+Read value 10 into memory
+Read value 23 into memory
+Read value 10 into memory
+Read value ec into memory
+Read value 0 into memory
+Read value e4 into memory
+Read value 0 into memory
+Read value e2 into memory
+Read value 10 into memory
+Read value 2d into memory
+Read value 10 into memory
+Read value ec into memory
+Read value 0 into memory
+Read value f0 into memory
+Read value 0 into memory
+Read value 9a into memory
+Read value 60 into memory
+Read value 0 into memory
+Read value ae into memory
+Read value 92 into memory
+Read value 60 into memory
+Read value 0 into memory
+Read value 94 into memory
+Read value f8 into memory
+Read value 0 into memory
+Program loaded. 176 bytes in memory.
+
+
+FetchOpCode(): at PC = 0 
+accessMemory(word) READ: MDR now has value = 0X9260 
+DecodeInstr(OpCode 0X9260): at PC = 0 : OpId = 18, size = word, numOprnd = 1
+FetchOperands(1): at PC = 0 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0X14 
+	BRA (word): OpAd1 = 20, OpAd2 = 20, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+
+FetchOpCode(): at PC = 20 
+accessMemory(word) READ: MDR now has value = 0X166 
+DecodeInstr(OpCode 0X166): at PC = 20 : OpId = 0, size = byte, numOprnd = 2
+FetchOperands(2): at PC = 20 : M1 = 3, M2 = 3
+accessMemory(word) READ: MDR now has value = 0X4 
+accessMemory(word) READ: MDR now has value = 0X6 
+	ADD (byte): OpAd1 = 4, OpAd2 = 4, M1 = 3, R1 = 0, M2 = 3, R2 = 0
+accessMemory(byte) READ: MDR now has value = 0X43 
+accessMemory(byte) READ: MDR now has value = 0X56 
+TMPR(0X99|153) = TMPS(0X43|67) + TMPD(0X56|86)
+accessMemory(byte) WRITE: memory[0X6] now has value = 0X99 
+
+FetchOpCode(): at PC = 26 
+accessMemory(word) READ: MDR now has value = 0XF000 
+DecodeInstr(OpCode 0XF000): at PC = 26 : OpId = 30, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 26 : M1 = 0, M2 = 0
+	DSR (byte): OpAd1 = 4, OpAd2 = 4, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Status Bits: H:FALSE N:TRUE Z:FALSE V:TRUE C:FALSE
+
+FetchOpCode(): at PC = 28 
+accessMemory(word) READ: MDR now has value = 0XEA60 
+DecodeInstr(OpCode 0XEA60): at PC = 28 : OpId = 29, size = word, numOprnd = 1
+FetchOperands(1): at PC = 28 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0X6 
+	DSP (word): OpAd1 = 6, OpAd2 = 6, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+accessMemory(word) READ: MDR now has value = 0X9978 
+[$0006] = $9978 (word)
+
+FetchOpCode(): at PC = 32 
+accessMemory(word) READ: MDR now has value = 0X366 
+DecodeInstr(OpCode 0X366): at PC = 32 : OpId = 0, size = word, numOprnd = 2
+FetchOperands(2): at PC = 32 : M1 = 3, M2 = 3
+accessMemory(word) READ: MDR now has value = 0X4 
+accessMemory(word) READ: MDR now has value = 0X6 
+	ADD (word): OpAd1 = 4, OpAd2 = 4, M1 = 3, R1 = 0, M2 = 3, R2 = 0
+accessMemory(word) READ: MDR now has value = 0X4334 
+accessMemory(word) READ: MDR now has value = 0X9978 
+TMPR(0XDCAC|56492) = TMPS(0X4334|17204) + TMPD(0X9978|39288)
+accessMemory(word) WRITE: memory[0X6] now has value = 0XDCAC 
+
+FetchOpCode(): at PC = 38 
+accessMemory(word) READ: MDR now has value = 0XF000 
+DecodeInstr(OpCode 0XF000): at PC = 38 : OpId = 30, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 38 : M1 = 0, M2 = 0
+	DSR (byte): OpAd1 = 4, OpAd2 = 4, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Status Bits: H:FALSE N:TRUE Z:FALSE V:FALSE C:FALSE
+
+FetchOpCode(): at PC = 40 
+accessMemory(word) READ: MDR now has value = 0XEA60 
+DecodeInstr(OpCode 0XEA60): at PC = 40 : OpId = 29, size = word, numOprnd = 1
+FetchOperands(1): at PC = 40 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0X6 
+	DSP (word): OpAd1 = 6, OpAd2 = 6, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+accessMemory(word) READ: MDR now has value = 0XDCAC 
+[$0006] = $DCAC (word)
+
+FetchOpCode(): at PC = 44 
+accessMemory(word) READ: MDR now has value = 0XC560 
+DecodeInstr(OpCode 0XC560): at PC = 44 : OpId = 24, size = long, numOprnd = 2
+FetchOperands(2): at PC = 44 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0X10 
+	MOVE (long): OpAd1 = 16, OpAd2 = 16, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+accessMemory(long) READ: MDR now has value = 0XF6 
+
+FetchOpCode(): at PC = 48 
+accessMemory(word) READ: MDR now has value = 0X8A0 
+DecodeInstr(OpCode 0X8A0): at PC = 48 : OpId = 1, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 48 : M1 = 3, M2 = 0
+	ADDQ (byte): OpAd1 = 16, OpAd2 = 16, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+TMPR(0X100|256) = TMPD(0XF6|246) + TMPS(0XA|10)
+
+FetchOpCode(): at PC = 50 
+accessMemory(word) READ: MDR now has value = 0XF000 
+DecodeInstr(OpCode 0XF000): at PC = 50 : OpId = 30, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 50 : M1 = 0, M2 = 0
+	DSR (byte): OpAd1 = 16, OpAd2 = 16, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Status Bits: H:FALSE N:FALSE Z:TRUE V:FALSE C:TRUE
+
+FetchOpCode(): at PC = 52 
+accessMemory(word) READ: MDR now has value = 0XEC00 
+DecodeInstr(OpCode 0XEC00): at PC = 52 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 52 : M1 = 0, M2 = 0
+	DSP (long): OpAd1 = 16, OpAd2 = 16, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+[ D0 ]  = $00000000 (long)
+
+FetchOpCode(): at PC = 54 
+accessMemory(word) READ: MDR now has value = 0XC560 
+DecodeInstr(OpCode 0XC560): at PC = 54 : OpId = 24, size = long, numOprnd = 2
+FetchOperands(2): at PC = 54 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0X10 
+	MOVE (long): OpAd1 = 16, OpAd2 = 16, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+accessMemory(long) READ: MDR now has value = 0XF6 
+
+FetchOpCode(): at PC = 58 
+accessMemory(word) READ: MDR now has value = 0XAA0 
+DecodeInstr(OpCode 0XAA0): at PC = 58 : OpId = 1, size = word, numOprnd = 1
+FetchOperands(1): at PC = 58 : M1 = 3, M2 = 0
+	ADDQ (word): OpAd1 = 16, OpAd2 = 16, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+TMPR(0X100|256) = TMPD(0XF6|246) + TMPS(0XA|10)
+
+FetchOpCode(): at PC = 60 
+accessMemory(word) READ: MDR now has value = 0XF000 
+DecodeInstr(OpCode 0XF000): at PC = 60 : OpId = 30, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 60 : M1 = 0, M2 = 0
+	DSR (byte): OpAd1 = 16, OpAd2 = 16, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Status Bits: H:FALSE N:FALSE Z:FALSE V:FALSE C:FALSE
+
+FetchOpCode(): at PC = 62 
+accessMemory(word) READ: MDR now has value = 0XEC00 
+DecodeInstr(OpCode 0XEC00): at PC = 62 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 62 : M1 = 0, M2 = 0
+	DSP (long): OpAd1 = 16, OpAd2 = 16, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+[ D0 ]  = $00000100 (long)
+
+FetchOpCode(): at PC = 64 
+accessMemory(word) READ: MDR now has value = 0X566 
+DecodeInstr(OpCode 0X566): at PC = 64 : OpId = 0, size = long, numOprnd = 2
+FetchOperands(2): at PC = 64 : M1 = 3, M2 = 3
+accessMemory(word) READ: MDR now has value = 0X8 
+accessMemory(word) READ: MDR now has value = 0XC 
+	ADD (long): OpAd1 = 8, OpAd2 = 8, M1 = 3, R1 = 0, M2 = 3, R2 = 0
+accessMemory(long) READ: MDR now has value = 0XFFFF90AB 
+accessMemory(long) READ: MDR now has value = 0XFFFFCDEF 
+TMPR(0XFFFF5E9A|-41318) = TMPS(0XFFFF90AB|-28501) + TMPD(0XFFFFCDEF|-12817)
+
+FetchOpCode(): at PC = 70 
+accessMemory(word) READ: MDR now has value = 0XF000 
+DecodeInstr(OpCode 0XF000): at PC = 70 : OpId = 30, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 70 : M1 = 0, M2 = 0
+	DSR (byte): OpAd1 = 8, OpAd2 = 8, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Status Bits: H:FALSE N:TRUE Z:FALSE V:FALSE C:TRUE
+
+FetchOpCode(): at PC = 72 
+accessMemory(word) READ: MDR now has value = 0XEC60 
+DecodeInstr(OpCode 0XEC60): at PC = 72 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 72 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0XC 
+	DSP (long): OpAd1 = 12, OpAd2 = 12, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+accessMemory(long) READ: MDR now has value = 0XFFFF5E9A 
+[$000C] = $FFFF5E9A (long)
+
+FetchOpCode(): at PC = 76 
+accessMemory(word) READ: MDR now has value = 0XE410 
+DecodeInstr(OpCode 0XE410): at PC = 76 : OpId = 28, size = long, numOprnd = 1
+FetchOperands(1): at PC = 76 : M1 = 0, M2 = 0
+	INP (long): OpAd1 = 12, OpAd2 = 12, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+Enter a value (long) for the register D1: 0
+
+FetchOpCode(): at PC = 78 
+accessMemory(word) READ: MDR now has value = 0X1566 
+DecodeInstr(OpCode 0X1566): at PC = 78 : OpId = 2, size = long, numOprnd = 2
+FetchOperands(2): at PC = 78 : M1 = 3, M2 = 3
+accessMemory(word) READ: MDR now has value = 0X8 
+accessMemory(word) READ: MDR now has value = 0XC 
+	SUB (long): OpAd1 = 8, OpAd2 = 8, M1 = 3, R1 = 0, M2 = 3, R2 = 0
+accessMemory(long) READ: MDR now has value = 0XFFFF90AB 
+accessMemory(long) READ: MDR now has value = 0XFFFF5E9A 
+TMPR(0XFFFFCDEF|-12817) = TMPD(0XFFFF5E9A|-41318) - TMPS(0XFFFF90AB|-28501)
+
+FetchOpCode(): at PC = 84 
+accessMemory(word) READ: MDR now has value = 0XEC60 
+DecodeInstr(OpCode 0XEC60): at PC = 84 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 84 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0XC 
+	DSP (long): OpAd1 = 12, OpAd2 = 12, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+accessMemory(long) READ: MDR now has value = 0XFFFFCDEF 
+[$000C] = $FFFFCDEF (long)
+
+FetchOpCode(): at PC = 88 
+accessMemory(word) READ: MDR now has value = 0X1CA0 
+DecodeInstr(OpCode 0X1CA0): at PC = 88 : OpId = 3, size = long, numOprnd = 1
+FetchOperands(1): at PC = 88 : M1 = 3, M2 = 0
+	SUBQ (long): OpAd1 = 12, OpAd2 = 12, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+TMPR(0XF6|246) = TMPD(0X100|256) + TMPS(0XA|10)
+
+FetchOpCode(): at PC = 90 
+accessMemory(word) READ: MDR now has value = 0XEC00 
+DecodeInstr(OpCode 0XEC00): at PC = 90 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 90 : M1 = 0, M2 = 0
+	DSP (long): OpAd1 = 12, OpAd2 = 12, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+[ D0 ]  = $000000F6 (long)
+
+FetchOpCode(): at PC = 92 
+accessMemory(word) READ: MDR now has value = 0XC560 
+DecodeInstr(OpCode 0XC560): at PC = 92 : OpId = 24, size = long, numOprnd = 2
+FetchOperands(2): at PC = 92 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0X10 
+	MOVE (long): OpAd1 = 16, OpAd2 = 16, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+accessMemory(long) READ: MDR now has value = 0XF6 
+
+FetchOpCode(): at PC = 96 
+accessMemory(word) READ: MDR now has value = 0X8A0 
+DecodeInstr(OpCode 0X8A0): at PC = 96 : OpId = 1, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 96 : M1 = 3, M2 = 0
+	ADDQ (byte): OpAd1 = 16, OpAd2 = 16, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+TMPR(0X100|256) = TMPD(0XF6|246) + TMPS(0XA|10)
+
+FetchOpCode(): at PC = 98 
+accessMemory(word) READ: MDR now has value = 0X18A0 
+DecodeInstr(OpCode 0X18A0): at PC = 98 : OpId = 3, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 98 : M1 = 3, M2 = 0
+	SUBQ (byte): OpAd1 = 16, OpAd2 = 16, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+TMPR(0XFFFFFFF6|-10) = TMPD(0|0) + TMPS(0XA|10)
+
+FetchOpCode(): at PC = 100 
+accessMemory(word) READ: MDR now has value = 0XEC00 
+DecodeInstr(OpCode 0XEC00): at PC = 100 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 100 : M1 = 0, M2 = 0
+	DSP (long): OpAd1 = 16, OpAd2 = 16, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+[ D0 ]  = $000000F6 (long)
+
+FetchOpCode(): at PC = 102 
+accessMemory(word) READ: MDR now has value = 0X1366 
+DecodeInstr(OpCode 0X1366): at PC = 102 : OpId = 2, size = word, numOprnd = 2
+FetchOperands(2): at PC = 102 : M1 = 3, M2 = 3
+accessMemory(word) READ: MDR now has value = 0X4 
+accessMemory(word) READ: MDR now has value = 0X6 
+	SUB (word): OpAd1 = 4, OpAd2 = 4, M1 = 3, R1 = 0, M2 = 3, R2 = 0
+accessMemory(word) READ: MDR now has value = 0X4334 
+accessMemory(word) READ: MDR now has value = 0XDCAC 
+TMPR(0X9978|39288) = TMPD(0XDCAC|56492) - TMPS(0X4334|17204)
+accessMemory(word) WRITE: memory[0X6] now has value = 0X9978 
+
+FetchOpCode(): at PC = 108 
+accessMemory(word) READ: MDR now has value = 0XEA60 
+DecodeInstr(OpCode 0XEA60): at PC = 108 : OpId = 29, size = word, numOprnd = 1
+FetchOperands(1): at PC = 108 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0X6 
+	DSP (word): OpAd1 = 6, OpAd2 = 6, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+accessMemory(word) READ: MDR now has value = 0X9978 
+[$0006] = $9978 (word)
+
+FetchOpCode(): at PC = 112 
+accessMemory(word) READ: MDR now has value = 0X1166 
+DecodeInstr(OpCode 0X1166): at PC = 112 : OpId = 2, size = byte, numOprnd = 2
+FetchOperands(2): at PC = 112 : M1 = 3, M2 = 3
+accessMemory(word) READ: MDR now has value = 0X4 
+accessMemory(word) READ: MDR now has value = 0X6 
+	SUB (byte): OpAd1 = 4, OpAd2 = 4, M1 = 3, R1 = 0, M2 = 3, R2 = 0
+accessMemory(byte) READ: MDR now has value = 0X43 
+accessMemory(byte) READ: MDR now has value = 0X99 
+TMPR(0X56|86) = TMPD(0X99|153) - TMPS(0X43|67)
+accessMemory(byte) WRITE: memory[0X6] now has value = 0X56 
+
+FetchOpCode(): at PC = 118 
+accessMemory(word) READ: MDR now has value = 0XEA60 
+DecodeInstr(OpCode 0XEA60): at PC = 118 : OpId = 29, size = word, numOprnd = 1
+FetchOperands(1): at PC = 118 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0X6 
+	DSP (word): OpAd1 = 6, OpAd2 = 6, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+accessMemory(word) READ: MDR now has value = 0X5678 
+[$0006] = $5678 (word)
+
+FetchOpCode(): at PC = 122 
+accessMemory(word) READ: MDR now has value = 0XF000 
+DecodeInstr(OpCode 0XF000): at PC = 122 : OpId = 30, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 122 : M1 = 0, M2 = 0
+	DSR (byte): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Status Bits: H:FALSE N:FALSE Z:FALSE V:TRUE C:FALSE
+
+FetchOpCode(): at PC = 124 
+accessMemory(word) READ: MDR now has value = 0XE410 
+DecodeInstr(OpCode 0XE410): at PC = 124 : OpId = 28, size = long, numOprnd = 1
+FetchOperands(1): at PC = 124 : M1 = 0, M2 = 0
+	INP (long): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+Enter a value (long) for the register D1: 0
+
+FetchOpCode(): at PC = 126 
+accessMemory(word) READ: MDR now has value = 0XCC30 
+DecodeInstr(OpCode 0XCC30): at PC = 126 : OpId = 25, size = long, numOprnd = 1
+FetchOperands(1): at PC = 126 : M1 = 0, M2 = 0
+	MOVEQ (long): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+
+FetchOpCode(): at PC = 128 
+accessMemory(word) READ: MDR now has value = 0X3400 
+DecodeInstr(OpCode 0X3400): at PC = 128 : OpId = 6, size = long, numOprnd = 1
+FetchOperands(1): at PC = 128 : M1 = 0, M2 = 0
+	NEG (long): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+TMPR(0XFFFFFFFD|-3) = -TMPD(0X3|3) 
+
+FetchOpCode(): at PC = 130 
+accessMemory(word) READ: MDR now has value = 0XEC00 
+DecodeInstr(OpCode 0XEC00): at PC = 130 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 130 : M1 = 0, M2 = 0
+	DSP (long): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+[ D0 ]  = $FFFFFFFD (long)
+
+FetchOpCode(): at PC = 132 
+accessMemory(word) READ: MDR now has value = 0X3200 
+DecodeInstr(OpCode 0X3200): at PC = 132 : OpId = 6, size = word, numOprnd = 1
+FetchOperands(1): at PC = 132 : M1 = 0, M2 = 0
+	NEG (word): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+TMPR(0XFFFF0003|-65533) = -TMPD(0XFFFD|65533) 
+
+FetchOpCode(): at PC = 134 
+accessMemory(word) READ: MDR now has value = 0XEC00 
+DecodeInstr(OpCode 0XEC00): at PC = 134 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 134 : M1 = 0, M2 = 0
+	DSP (long): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+[ D0 ]  = $FFFF0003 (long)
+
+FetchOpCode(): at PC = 136 
+accessMemory(word) READ: MDR now has value = 0X3000 
+DecodeInstr(OpCode 0X3000): at PC = 136 : OpId = 6, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 136 : M1 = 0, M2 = 0
+	NEG (byte): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+TMPR(0XFFFFFFFD|-3) = -TMPD(0X3|3) 
+
+FetchOpCode(): at PC = 138 
+accessMemory(word) READ: MDR now has value = 0XEC00 
+DecodeInstr(OpCode 0XEC00): at PC = 138 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 138 : M1 = 0, M2 = 0
+	DSP (long): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+[ D0 ]  = $FFFF00FD (long)
+
+FetchOpCode(): at PC = 140 
+accessMemory(word) READ: MDR now has value = 0X3000 
+DecodeInstr(OpCode 0X3000): at PC = 140 : OpId = 6, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 140 : M1 = 0, M2 = 0
+	NEG (byte): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+TMPR(0XFFFFFF03|-253) = -TMPD(0XFD|253) 
+
+FetchOpCode(): at PC = 142 
+accessMemory(word) READ: MDR now has value = 0XEC00 
+DecodeInstr(OpCode 0XEC00): at PC = 142 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 142 : M1 = 0, M2 = 0
+	DSP (long): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+[ D0 ]  = $FFFF0003 (long)
+
+FetchOpCode(): at PC = 144 
+accessMemory(word) READ: MDR now has value = 0XF000 
+DecodeInstr(OpCode 0XF000): at PC = 144 : OpId = 30, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 144 : M1 = 0, M2 = 0
+	DSR (byte): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Status Bits: H:FALSE N:FALSE Z:FALSE V:FALSE C:TRUE
+
+FetchOpCode(): at PC = 146 
+accessMemory(word) READ: MDR now has value = 0XE410 
+DecodeInstr(OpCode 0XE410): at PC = 146 : OpId = 28, size = long, numOprnd = 1
+FetchOperands(1): at PC = 146 : M1 = 0, M2 = 0
+	INP (long): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+Enter a value (long) for the register D1: 0
+
+FetchOpCode(): at PC = 148 
+accessMemory(word) READ: MDR now has value = 0XE200 
+DecodeInstr(OpCode 0XE200): at PC = 148 : OpId = 28, size = word, numOprnd = 1
+FetchOperands(1): at PC = 148 : M1 = 0, M2 = 0
+	INP (word): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Enter a value (word) for the register D0: ff80
+
+FetchOpCode(): at PC = 150 
+accessMemory(word) READ: MDR now has value = 0XE210 
+DecodeInstr(OpCode 0XE210): at PC = 150 : OpId = 28, size = word, numOprnd = 1
+FetchOperands(1): at PC = 150 : M1 = 0, M2 = 0
+	INP (word): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+Enter a value (word) for the register D1: 7f
+
+FetchOpCode(): at PC = 152 
+accessMemory(word) READ: MDR now has value = 0X2310 
+DecodeInstr(OpCode 0X2310): at PC = 152 : OpId = 4, size = word, numOprnd = 2
+FetchOperands(2): at PC = 152 : M1 = 0, M2 = 0
+	MULS (word): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+TMPR(0XFFFFC080|-16256) = TMPD(0XFFFFFF80|-128) * TMPS(0X7F|127)
+
+FetchOpCode(): at PC = 154 
+accessMemory(word) READ: MDR now has value = 0XEC00 
+DecodeInstr(OpCode 0XEC00): at PC = 154 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 154 : M1 = 0, M2 = 0
+	DSP (long): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+[ D0 ]  = $FFFFC080 (long)
+
+FetchOpCode(): at PC = 156 
+accessMemory(word) READ: MDR now has value = 0XE400 
+DecodeInstr(OpCode 0XE400): at PC = 156 : OpId = 28, size = long, numOprnd = 1
+FetchOperands(1): at PC = 156 : M1 = 0, M2 = 0
+	INP (long): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Enter a value (long) for the register D0: ffffffff
+
+FetchOpCode(): at PC = 158 
+accessMemory(word) READ: MDR now has value = 0XE210 
+DecodeInstr(OpCode 0XE210): at PC = 158 : OpId = 28, size = word, numOprnd = 1
+FetchOperands(1): at PC = 158 : M1 = 0, M2 = 0
+	INP (word): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+Enter a value (word) for the register D1: fffe
+
+FetchOpCode(): at PC = 160 
+accessMemory(word) READ: MDR now has value = 0X2D10 
+DecodeInstr(OpCode 0X2D10): at PC = 160 : OpId = 5, size = long, numOprnd = 2
+FetchOperands(2): at PC = 160 : M1 = 0, M2 = 0
+	DIVS (long): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+TMPR(0XFFFF0000|-65536) = TMPD(0XFFFFFFFF|-1) / TMPS(0X2|2)
+
+FetchOpCode(): at PC = 162 
+accessMemory(word) READ: MDR now has value = 0XEC00 
+DecodeInstr(OpCode 0XEC00): at PC = 162 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 162 : M1 = 0, M2 = 0
+	DSP (long): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+[ D0 ]  = $FFFF0000 (long)
+
+FetchOpCode(): at PC = 164 
+accessMemory(word) READ: MDR now has value = 0XF000 
+DecodeInstr(OpCode 0XF000): at PC = 164 : OpId = 30, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 164 : M1 = 0, M2 = 0
+	DSR (byte): OpAd1 = 6, OpAd2 = 6, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Status Bits: H:FALSE N:TRUE Z:FALSE V:FALSE C:FALSE
+
+FetchOpCode(): at PC = 166 
+accessMemory(word) READ: MDR now has value = 0X9A60 
+DecodeInstr(OpCode 0X9A60): at PC = 166 : OpId = 19, size = word, numOprnd = 1
+FetchOperands(1): at PC = 166 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0XAE 
+	BVS (word): OpAd1 = 174, OpAd2 = 174, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+
+FetchOpCode(): at PC = 170 
+accessMemory(word) READ: MDR now has value = 0X9260 
+DecodeInstr(OpCode 0X9260): at PC = 170 : OpId = 18, size = word, numOprnd = 1
+FetchOperands(1): at PC = 170 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0X94 
+	BRA (word): OpAd1 = 148, OpAd2 = 148, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+
+FetchOpCode(): at PC = 148 
+accessMemory(word) READ: MDR now has value = 0XE200 
+DecodeInstr(OpCode 0XE200): at PC = 148 : OpId = 28, size = word, numOprnd = 1
+FetchOperands(1): at PC = 148 : M1 = 0, M2 = 0
+	INP (word): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Enter a value (word) for the register D0: -5
+
+FetchOpCode(): at PC = 150 
+accessMemory(word) READ: MDR now has value = 0XE210 
+DecodeInstr(OpCode 0XE210): at PC = 150 : OpId = 28, size = word, numOprnd = 1
+FetchOperands(1): at PC = 150 : M1 = 0, M2 = 0
+	INP (word): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+Enter a value (word) for the register D1: -5
+
+FetchOpCode(): at PC = 152 
+accessMemory(word) READ: MDR now has value = 0X2310 
+DecodeInstr(OpCode 0X2310): at PC = 152 : OpId = 4, size = word, numOprnd = 2
+FetchOperands(2): at PC = 152 : M1 = 0, M2 = 0
+	MULS (word): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+TMPR(0X19|25) = TMPD(0XFFFFFFFB|-5) * TMPS(0XFFFFFFFB|-5)
+
+FetchOpCode(): at PC = 154 
+accessMemory(word) READ: MDR now has value = 0XEC00 
+DecodeInstr(OpCode 0XEC00): at PC = 154 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 154 : M1 = 0, M2 = 0
+	DSP (long): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+[ D0 ]  = $00000019 (long)
+
+FetchOpCode(): at PC = 156 
+accessMemory(word) READ: MDR now has value = 0XE400 
+DecodeInstr(OpCode 0XE400): at PC = 156 : OpId = 28, size = long, numOprnd = 1
+FetchOperands(1): at PC = 156 : M1 = 0, M2 = 0
+	INP (long): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Enter a value (long) for the register D0: ffff0000
+
+FetchOpCode(): at PC = 158 
+accessMemory(word) READ: MDR now has value = 0XE210 
+DecodeInstr(OpCode 0XE210): at PC = 158 : OpId = 28, size = word, numOprnd = 1
+FetchOperands(1): at PC = 158 : M1 = 0, M2 = 0
+	INP (word): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+Enter a value (word) for the register D1: 7e
+
+FetchOpCode(): at PC = 160 
+accessMemory(word) READ: MDR now has value = 0X2D10 
+DecodeInstr(OpCode 0X2D10): at PC = 160 : OpId = 5, size = long, numOprnd = 2
+FetchOperands(2): at PC = 160 : M1 = 0, M2 = 0
+	DIVS (long): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+TMPR(0XFFF0FDF8|-983560) = TMPD(0XFFFF0000|-65536) / TMPS(0X7E|126)
+
+FetchOpCode(): at PC = 162 
+accessMemory(word) READ: MDR now has value = 0XEC00 
+DecodeInstr(OpCode 0XEC00): at PC = 162 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 162 : M1 = 0, M2 = 0
+	DSP (long): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+[ D0 ]  = $FFF0FDF8 (long)
+
+FetchOpCode(): at PC = 164 
+accessMemory(word) READ: MDR now has value = 0XF000 
+DecodeInstr(OpCode 0XF000): at PC = 164 : OpId = 30, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 164 : M1 = 0, M2 = 0
+	DSR (byte): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Status Bits: H:FALSE N:TRUE Z:FALSE V:FALSE C:FALSE
+
+FetchOpCode(): at PC = 166 
+accessMemory(word) READ: MDR now has value = 0X9A60 
+DecodeInstr(OpCode 0X9A60): at PC = 166 : OpId = 19, size = word, numOprnd = 1
+FetchOperands(1): at PC = 166 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0XAE 
+	BVS (word): OpAd1 = 174, OpAd2 = 174, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+
+FetchOpCode(): at PC = 170 
+accessMemory(word) READ: MDR now has value = 0X9260 
+DecodeInstr(OpCode 0X9260): at PC = 170 : OpId = 18, size = word, numOprnd = 1
+FetchOperands(1): at PC = 170 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0X94 
+	BRA (word): OpAd1 = 148, OpAd2 = 148, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+
+FetchOpCode(): at PC = 148 
+accessMemory(word) READ: MDR now has value = 0XE200 
+DecodeInstr(OpCode 0XE200): at PC = 148 : OpId = 28, size = word, numOprnd = 1
+FetchOperands(1): at PC = 148 : M1 = 0, M2 = 0
+	INP (word): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Enter a value (word) for the register D0: 10
+
+FetchOpCode(): at PC = 150 
+accessMemory(word) READ: MDR now has value = 0XE210 
+DecodeInstr(OpCode 0XE210): at PC = 150 : OpId = 28, size = word, numOprnd = 1
+FetchOperands(1): at PC = 150 : M1 = 0, M2 = 0
+	INP (word): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+Enter a value (word) for the register D1: -10
+
+FetchOpCode(): at PC = 152 
+accessMemory(word) READ: MDR now has value = 0X2310 
+DecodeInstr(OpCode 0X2310): at PC = 152 : OpId = 4, size = word, numOprnd = 2
+FetchOperands(2): at PC = 152 : M1 = 0, M2 = 0
+	MULS (word): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+TMPR(0XFFFFFF00|-256) = TMPD(0X10|16) * TMPS(0XFFFFFFF0|-16)
+
+FetchOpCode(): at PC = 154 
+accessMemory(word) READ: MDR now has value = 0XEC00 
+DecodeInstr(OpCode 0XEC00): at PC = 154 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 154 : M1 = 0, M2 = 0
+	DSP (long): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+[ D0 ]  = $FFFFFF00 (long)
+
+FetchOpCode(): at PC = 156 
+accessMemory(word) READ: MDR now has value = 0XE400 
+DecodeInstr(OpCode 0XE400): at PC = 156 : OpId = 28, size = long, numOprnd = 1
+FetchOperands(1): at PC = 156 : M1 = 0, M2 = 0
+	INP (long): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Enter a value (long) for the register D0: 10
+
+FetchOpCode(): at PC = 158 
+accessMemory(word) READ: MDR now has value = 0XE210 
+DecodeInstr(OpCode 0XE210): at PC = 158 : OpId = 28, size = word, numOprnd = 1
+FetchOperands(1): at PC = 158 : M1 = 0, M2 = 0
+	INP (word): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+Enter a value (word) for the register D1: -10
+
+FetchOpCode(): at PC = 160 
+accessMemory(word) READ: MDR now has value = 0X2D10 
+DecodeInstr(OpCode 0X2D10): at PC = 160 : OpId = 5, size = long, numOprnd = 2
+FetchOperands(2): at PC = 160 : M1 = 0, M2 = 0
+	DIVS (long): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+TMPR(0XFFFF|65535) = TMPD(0XFFFFFFF0|-16) / TMPS(0X10|16)
+
+FetchOpCode(): at PC = 162 
+accessMemory(word) READ: MDR now has value = 0XEC00 
+DecodeInstr(OpCode 0XEC00): at PC = 162 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 162 : M1 = 0, M2 = 0
+	DSP (long): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+[ D0 ]  = $0000FFFF (long)
+
+FetchOpCode(): at PC = 164 
+accessMemory(word) READ: MDR now has value = 0XF000 
+DecodeInstr(OpCode 0XF000): at PC = 164 : OpId = 30, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 164 : M1 = 0, M2 = 0
+	DSR (byte): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Status Bits: H:FALSE N:FALSE Z:FALSE V:FALSE C:FALSE
+
+FetchOpCode(): at PC = 166 
+accessMemory(word) READ: MDR now has value = 0X9A60 
+DecodeInstr(OpCode 0X9A60): at PC = 166 : OpId = 19, size = word, numOprnd = 1
+FetchOperands(1): at PC = 166 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0XAE 
+	BVS (word): OpAd1 = 174, OpAd2 = 174, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+
+FetchOpCode(): at PC = 170 
+accessMemory(word) READ: MDR now has value = 0X9260 
+DecodeInstr(OpCode 0X9260): at PC = 170 : OpId = 18, size = word, numOprnd = 1
+FetchOperands(1): at PC = 170 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0X94 
+	BRA (word): OpAd1 = 148, OpAd2 = 148, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+
+FetchOpCode(): at PC = 148 
+accessMemory(word) READ: MDR now has value = 0XE200 
+DecodeInstr(OpCode 0XE200): at PC = 148 : OpId = 28, size = word, numOprnd = 1
+FetchOperands(1): at PC = 148 : M1 = 0, M2 = 0
+	INP (word): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Enter a value (word) for the register D0: ffff
+
+FetchOpCode(): at PC = 150 
+accessMemory(word) READ: MDR now has value = 0XE210 
+DecodeInstr(OpCode 0XE210): at PC = 150 : OpId = 28, size = word, numOprnd = 1
+FetchOperands(1): at PC = 150 : M1 = 0, M2 = 0
+	INP (word): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+Enter a value (word) for the register D1: ffff
+
+FetchOpCode(): at PC = 152 
+accessMemory(word) READ: MDR now has value = 0X2310 
+DecodeInstr(OpCode 0X2310): at PC = 152 : OpId = 4, size = word, numOprnd = 2
+FetchOperands(2): at PC = 152 : M1 = 0, M2 = 0
+	MULS (word): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+TMPR(0X1|1) = TMPD(0XFFFFFFFF|-1) * TMPS(0XFFFFFFFF|-1)
+
+FetchOpCode(): at PC = 154 
+accessMemory(word) READ: MDR now has value = 0XEC00 
+DecodeInstr(OpCode 0XEC00): at PC = 154 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 154 : M1 = 0, M2 = 0
+	DSP (long): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+[ D0 ]  = $00000001 (long)
+
+FetchOpCode(): at PC = 156 
+accessMemory(word) READ: MDR now has value = 0XE400 
+DecodeInstr(OpCode 0XE400): at PC = 156 : OpId = 28, size = long, numOprnd = 1
+FetchOperands(1): at PC = 156 : M1 = 0, M2 = 0
+	INP (long): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Enter a value (long) for the register D0: 7ffff
+
+FetchOpCode(): at PC = 158 
+accessMemory(word) READ: MDR now has value = 0XE210 
+DecodeInstr(OpCode 0XE210): at PC = 158 : OpId = 28, size = word, numOprnd = 1
+FetchOperands(1): at PC = 158 : M1 = 0, M2 = 0
+	INP (word): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+Enter a value (word) for the register D1: 2
+
+FetchOpCode(): at PC = 160 
+accessMemory(word) READ: MDR now has value = 0X2D10 
+DecodeInstr(OpCode 0X2D10): at PC = 160 : OpId = 5, size = long, numOprnd = 2
+FetchOperands(2): at PC = 160 : M1 = 0, M2 = 0
+	DIVS (long): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 1, M2 = 0, R2 = 0
+TMPR(0X1FFFF|131071) = TMPD(0X7FFFF|524287) / TMPS(0X2|2)
+
+FetchOpCode(): at PC = 162 
+accessMemory(word) READ: MDR now has value = 0XEC00 
+DecodeInstr(OpCode 0XEC00): at PC = 162 : OpId = 29, size = long, numOprnd = 1
+FetchOperands(1): at PC = 162 : M1 = 0, M2 = 0
+	DSP (long): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+[ D0 ]  = $0001FFFF (long)
+
+FetchOpCode(): at PC = 164 
+accessMemory(word) READ: MDR now has value = 0XF000 
+DecodeInstr(OpCode 0XF000): at PC = 164 : OpId = 30, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 164 : M1 = 0, M2 = 0
+	DSR (byte): OpAd1 = 148, OpAd2 = 148, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+Status Bits: H:FALSE N:FALSE Z:FALSE V:TRUE C:FALSE
+
+FetchOpCode(): at PC = 166 
+accessMemory(word) READ: MDR now has value = 0X9A60 
+DecodeInstr(OpCode 0X9A60): at PC = 166 : OpId = 19, size = word, numOprnd = 1
+FetchOperands(1): at PC = 166 : M1 = 3, M2 = 0
+accessMemory(word) READ: MDR now has value = 0XAE 
+	BVS (word): OpAd1 = 174, OpAd2 = 174, M1 = 3, R1 = 0, M2 = 0, R2 = 0
+
+FetchOpCode(): at PC = 174 
+accessMemory(word) READ: MDR now has value = 0XF800 
+DecodeInstr(OpCode 0XF800): at PC = 174 : OpId = 31, size = byte, numOprnd = 1
+FetchOperands(1): at PC = 174 : M1 = 0, M2 = 0
+	HLT (byte): OpAd1 = 174, OpAd2 = 174, M1 = 0, R1 = 0, M2 = 0, R2 = 0
+
+	End of Fetch-Execute Cycle
+Your Option ('e' to execute a program, 'q' to quit): q
+Bye!
+	PROGRAM ENDED

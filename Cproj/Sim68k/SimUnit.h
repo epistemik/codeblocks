@@ -7,7 +7,9 @@
  *   $File: //depot/Eclipse/CPP/Workspace/Sim68k/src/SimUnit.h $
  *   $Revision: #18 $
  *   $Change: 114 $
- *   $DateTime: 2011/02/21 15:14:53 $   
+ *   $DateTime: 2011/02/21 15:14:53 $
+ *
+ *   UPDATED Nov 12, 2018
  */
 
 #ifndef MHS_CODEBLOCKS_CPROJ_SIM68K_SIMUNIT_H
@@ -85,8 +87,14 @@ enum sigbit { Least, Most }; // Least = 0 = Least Significant, Most = 1 = Most S
 enum    dataSize { byteSize, wordSize, intSize   }; // intSize was originally 'longSize'
 enum numOperands { noZero, noOne, noTwo, noThree }; // Number of necessary operands = opCode bit P + 1
 
-enum addressmode { DATA_REGISTER_DIRECT, ADDRESS_REGISTER_DIRECT, AM_TWO_UNUSED, RELATIVE_ABSOLUTE, ADDRESS_REGISTER_INDIRECT,
-                   AM_FIVE_UNUSED, ADDRESS_REGISTER_INDIRECT_POSTINC, ADDRESS_REGISTER_INDIRECT_PREDEC };
+enum addressmode { DATA_REGISTER_DIRECT,
+                   ADDRESS_REGISTER_DIRECT,
+                   AM_TWO_UNUSED,
+                   RELATIVE_ABSOLUTE,
+                   ADDRESS_REGISTER_INDIRECT,
+                   AM_FIVE_UNUSED,
+                   ADDRESS_REGISTER_INDIRECT_POSTINC,
+                   ADDRESS_REGISTER_INDIRECT_PREDEC };
 
 /*
  *  VARIABLES
@@ -105,7 +113,7 @@ enum bit Z ; // Zero
 enum bit N ; // Negative
 enum bit H ; // Halt
 
-string bitName[] = { "FALSE", "TRUE" };
+string  bitName[] = { "FALSE", "TRUE" };
 string sizeName[] = { "byte", "word", "long" }; // use 'long' as name to accord with original Pascal result printouts
 
 string Mnemo[ iHLT + 1 ]; // Mnemonic string for opCodes
@@ -117,9 +125,9 @@ word PC ;   // Program Counter
  *   FUNCTIONS
  *=========================================================================================================*/
 
-// Generic error verification function, with message display,          
-// if Cond is False, display an error message (including the OpName)   
-// The Halt Status bit will also be set if there is an Error. 
+// Generic error verification function, with message display.
+// if Cond is False, display an error message (including the OpName)
+// the Halt Status bit will also be set if there is an Error.
 boolean CheckCond( boolean Cond, string Message )
 {
   if( Cond == True )
@@ -197,12 +205,13 @@ void MnemoInit()
 *************************************************************************** */
 
 // Returns a substring of bits between FirstBit and LastBit from V
-// Ex:                    1111 11              
-//    Bit Positions:      5432 1098 7654 3210  
-//    V = 0x1234     (or %0001 0010 0011 0100) 
+// Ex:
+//    Bit Positions:      1111 11
+//                        5432 1098 7654 3210  // 0 to 15
+//    V = 0x1234   i.e. %(0001 0010 0011 0100)
 //    FirstBit = 3, LastBit = 9         
 //    The bits from 3 to 9 are %10 0011 0
-//    The function returns 0x0046  (%0000 0000 0100 0110)
+//    The function returns 0x0046  %(0000 0000 0100 0110)
 word GetBits( word V, byte FirstBit, byte LastBit )
 {
   return( (V >> FirstBit) & ((2<<(LastBit-FirstBit)) - 1) );
@@ -254,7 +263,7 @@ void SetByte( int* V, int position, byte Value )
     case 2: *V = (*V & 0xFF00FFFF) | (Value << 16); break ;
     case 3: *V = (*V & 0x00FFFFFF) | (Value << 24); break ;
     
-    default: printf( "*** ERROR >> SetByteL() received invalid position '%d' \n", position );
+    default: printf( "*** ERROR >> SetByte() received invalid position '%d' \n", position );
              H = True ;
              return ;
   }
