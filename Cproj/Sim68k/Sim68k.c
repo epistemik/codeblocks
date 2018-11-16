@@ -85,7 +85,7 @@ boolean Loader( string name )
     // have hex input
     if( ch == HEX_MARKER )
     {
-      fscanf( f68b, "%x", memory+address );
+      fscanf( f68b, "%x", (unsigned int*)(memory+address) );
       
       if( nDebugLevel > 1 ) printf( "Read value %x into memory\n", memory[address] );
 
@@ -319,8 +319,8 @@ void FillTmpReg( int* tmpReg,            // tmp Register to modify - TMPS, TMPD 
            *tmpReg = MDR ;
            break;
            
-    default: // This error should never occur, but just in case...! 
-             printf( "*** ERROR >> FillTMP() has Invalid Addressing Mode '%d' at PC = %d\n", mode, (PC-2) );
+    default: // got an UNUSED mode...?
+             printf( "*** ERROR >> FillTmpReg() has Invalid Addressing Mode '%d' at PC = %d\n", mode, (PC-2) );
              H = True ;
   }// switch mode
   
@@ -411,7 +411,8 @@ void SetZN( int tmpReg )
                    N = ( GetBits(GetWord(tmpReg, Most), 15, 15) == 1 );
                    break;
                    
-    default: printf( "*** ERROR >> SetZN() received invalid data size '%d' at PC = %d\n", DS, (PC-2) );
+    default: // should NEVER happen
+             printf( "*** ERROR >> SetZN() received invalid data size '%d' at PC = %d\n", DS, (PC-2) );
              H = True ;
   }
 
@@ -428,7 +429,8 @@ void SetSmDmRm( int tmpSrc, int tmpDst, int tmpRes )
     case wordSize: break;
     case  intSize: mostSigBit = 31 ; break;
     
-    default: printf( "*** ERROR >> SetSmDmRm() received invalid data size '%d' at PC = %d\n", DS, (PC-2) );
+    default: // should NEVER happen
+             printf( "*** ERROR >> SetSmDmRm() received invalid data size '%d' at PC = %d\n", DS, (PC-2) );
              H = True ;
   }
   
@@ -446,11 +448,12 @@ void ExecInstr()
   byte i ; // counter 
   word tmpA ;
   
-  if( nDebugLevel > 0 ) printf( "\t%s (%s): OpAd1 = %d, OpAd2 = %d, M1 = %d, R1 = %d, M2 = %d, R2 = %d\n",
-                                Mnemo[OpId], sizeName[DS], OpAddr1, OpAddr1, M1, R1, M2, R2 );
+  if( nDebugLevel > 0 )
+    printf( "\tExecInstr() %s (%s): OpAd1 = %d, OpAd2 = %d, M1 = %d, R1 = %d, M2 = %d, R2 = %d\n",
+                  Mnemo[OpId], sizeName[DS], OpAddr1, OpAddr2,   M1,      R1,      M2,      R2 );
   
   // Execute the instruction according to opCode
-  // Use a CASE structure where each case corresponds to an instruction & its micro-program
+  // Use a switch statement where each case corresponds to an instruction & its micro-program
   switch( OpId )
   {  
      // addition
@@ -463,7 +466,7 @@ void ExecInstr()
                // 3. Compute TMPR using TMPS & TMPD  
                TMPR = TMPS + TMPD ;
                if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPS(%#X|%d) + TMPD(%#X|%d)\n",
-                                              TMPR, TMPR, TMPS, TMPS, TMPD, TMPD );
+                                              TMPR, TMPR,    TMPS, TMPS,    TMPD, TMPD );
                // 4. Update status bits HZNVC if necessary  
                SetZN( TMPR );
                SetSmDmRm( TMPS, TMPD, TMPR );
@@ -480,7 +483,7 @@ void ExecInstr()
                 // Sign extension if W or L ??
                 TMPR = TMPD + TMPS ;
                 if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) + TMPS(%#X|%d)\n",
-                                               TMPR, TMPR, TMPD, TMPD, TMPS, TMPS );
+                                               TMPR, TMPR,    TMPD, TMPD,    TMPS, TMPS );
                 SetZN( TMPR );
                 SetSmDmRm( TMPS, TMPD, TMPR );
                 V = ( Sm & Dm & ~Rm ) | ( ~Sm & ~Dm & Rm );
@@ -493,7 +496,7 @@ void ExecInstr()
                FillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
                TMPR = TMPD - TMPS ;
                if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) - TMPS(%#X|%d)\n",
-                                              TMPR, TMPR, TMPD, TMPD, TMPS, TMPS );
+                                              TMPR, TMPR,    TMPD, TMPD,    TMPS, TMPS );
                SetZN( TMPR );
                SetSmDmRm( TMPS, TMPD, TMPR );
                V = ( ~Sm & Dm & ~Rm ) | ( Sm & ~Dm & Rm );
@@ -508,7 +511,7 @@ void ExecInstr()
                 // Sign extension if W or L ??
                 TMPR = TMPD - TMPS;
                 if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) + TMPS(%#X|%d)\n",
-                                               TMPR, TMPR, TMPD, TMPD, TMPS, TMPS );
+                                               TMPR, TMPR,    TMPD, TMPD,    TMPS, TMPS );
                 SetZN( TMPR );
                 SetSmDmRm( TMPS, TMPD, TMPR );
                 V = ( ~Sm & Dm & ~Rm ) | ( Sm & ~Dm & Rm );
@@ -527,7 +530,7 @@ void ExecInstr()
                     TMPD = TMPD | 0xFFFF0000 ;
                   TMPR = TMPD * TMPS;
                   if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) * TMPS(%#X|%d)\n",
-                                                 TMPR, TMPR, TMPD, TMPD, TMPS, TMPS );
+                                                 TMPR, TMPR,    TMPD, TMPD,    TMPS, TMPS );
                   SetZN( TMPR );
                   V = False;
                   C = False;
@@ -561,7 +564,7 @@ void ExecInstr()
                         SetWord( &TMPR, Most, (TMPD % GetWord(TMPS, Least)) );
                       };
                     if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) / TMPS(%#X|%d)\n",
-                                                   TMPR, TMPR, TMPD, TMPD, TMPS, TMPS );
+                                                   TMPR, TMPR,    TMPD, TMPD,    TMPS, TMPS );
                     SetZN( TMPR );
                     C = False ;
                     SetResult( &TMPR, OpAddr2, DS, M2, R2 );
@@ -573,7 +576,7 @@ void ExecInstr()
                FillTmpReg( &TMPD, OpAddr1, DS, M1, R1 );
                TMPR = -TMPD;
                if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = -TMPD(%#X|%d) \n",
-                                              TMPR, TMPR, TMPD, TMPD );
+                                              TMPR, TMPR,     TMPD, TMPD );
                SetZN( TMPR );
                SetSmDmRm( TMPS, TMPD, TMPR );
                V = Dm & Rm ;
@@ -593,7 +596,7 @@ void ExecInstr()
                FillTmpReg( &TMPD, OpAddr1, DS, M1, R1 );
                TMPR = ~TMPD ;
                if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = ~TMPD(%#X|%d) \n",
-                                              TMPR, TMPR, TMPD, TMPD );
+                                              TMPR, TMPR,     TMPD, TMPD );
                SetZN( TMPR );
                V = False;
                C = False;
@@ -605,7 +608,7 @@ void ExecInstr()
                FillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
                TMPR = TMPD & TMPS ;
                if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) & TMPS(%#X|%d)\n",
-                                              TMPR, TMPR, TMPD, TMPD, TMPS, TMPS );
+                                              TMPR, TMPR,    TMPD, TMPD,    TMPS, TMPS );
                SetZN( TMPR );
                V = False;
                C = False;
@@ -617,7 +620,7 @@ void ExecInstr()
               FillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
               TMPR = TMPD | TMPS ;
               if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) | TMPS(%#X|%d)\n",
-                                             TMPR, TMPR, TMPD, TMPD, TMPS, TMPS );
+                                             TMPR, TMPR,    TMPD, TMPD,    TMPS, TMPS );
               SetZN( TMPR );
               V = False;
               C = False;
@@ -629,7 +632,7 @@ void ExecInstr()
                FillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
                TMPR = TMPD ^ TMPS;
                if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) ^ TMPS(%#X|%d)\n",
-                                              TMPR, TMPR, TMPD, TMPD, TMPS, TMPS );
+                                              TMPR, TMPR,    TMPD, TMPD,    TMPS, TMPS );
                SetZN( TMPR );
                V = False;
                C = False;
@@ -640,7 +643,7 @@ void ExecInstr()
                FillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
                TMPR = TMPD << opcData;
                if( nDebugLevel > 0 ) printf( "TMPR(%#X|%d) = TMPD(%#X|%d) << opcData(%d) \n",
-                                              TMPR, TMPR, TMPD, TMPD, opcData );
+                                              TMPR, TMPR,    TMPD, TMPD,        opcData );
                SetZN( TMPR );
                V = False;
                if( opcData > 0 )
@@ -661,13 +664,17 @@ void ExecInstr()
                // Instead, need to put 0x80000000 in a register and proceed as below:
                FillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
                TMPS = 0x80000000 ;
-               if( nDebugLevel > 0 ) printf( "TMPD = %08x; TMPS = %08x; opcData = %d \n", TMPD, TMPS, opcData );
+               if( nDebugLevel > 0 )
+                 printf( "TMPD = %08x; TMPS = %08x; opcData = %d \n", TMPD, TMPS, opcData );
                TMPR = TMPS >> (opcData-1) ;
-               if( nDebugLevel > 0 ) printf( "TMPR(%08x) = TMPS(%08x) >> %d \n", TMPR, TMPS, opcData-1 );
+               if( nDebugLevel > 0 )
+                 printf( "TMPR(%08x) = TMPS(%08x) >> %d \n", TMPR, TMPS, opcData-1 );
                TMPS = ~TMPR ;
-               if( nDebugLevel > 0 ) printf( "TMPS(%08x) = ~TMPR(%08x) \n", TMPS, TMPR );
+               if( nDebugLevel > 0 )
+                 printf( "TMPS(%08x) = ~TMPR(%08x) \n", TMPS, TMPR );
                TMPR = (TMPD >> opcData) & TMPS ;
-               if( nDebugLevel > 0 ) printf( "TMPR(%08x) = (TMPD(%08x) >> %d) & TMPS(%08x) \n", TMPR, TMPD, opcData, TMPS );
+               if( nDebugLevel > 0 )
+                 printf( "TMPR(%08x) = (TMPD(%08x) >> %d) & TMPS(%08x) \n", TMPR, TMPD, opcData, TMPS );
                SetZN( TMPR );
                V = False;
                C = ( opcData > 0 ) ? ( GetBits(TMPD, opcData-1, opcData-1) == 1 ) : False ;
@@ -780,7 +787,7 @@ void ExecInstr()
      case iMOVA:
                  if( CheckCond( ((M1 == RELATIVE_ABSOLUTE) && (M2 == ADDRESS_REGISTER_DIRECT)), "Invalid Addressing Mode" )
                      && CheckCond( (DS == wordSize), "Invalid Data Size" ) )
-                   SetResult( &OpAddr1, OpAddr2, DS, M2, R2 );
+                   SetResult( (int*)&OpAddr1, OpAddr2, DS, M2, R2 );
                  break;
      // input
      case iINP:

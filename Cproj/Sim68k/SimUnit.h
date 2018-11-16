@@ -67,17 +67,19 @@
 #define iHLT   31  // HALT
 
 // 0x0..0xFF = 0x80..0x7F in 2's CF
-/* SHOULD be a char, but doesn't function properly for data input or as array index if a char ! */
-typedef  int  byte ;
+/* SHOULD be a char, but doesn't function properly for data input or as array index if a char !
+ * UPDATE 2018-11-15: some warnings, but works as an unsigned char */
+typedef  unsigned char  byte ;
 
 // 0x0..0xFFFF = 0x8000..0x7FFF in 2's CF
-/* SHOULD be a short, but doesn't function properly for data input or as array index if a short ! */
-typedef  int  word ;
+/* SHOULD be a short, but doesn't function properly for data input or as array index if a short !
+ * UPDATE 2018-11-15: some warnings, but works as an unsigned short */
+typedef  unsigned short  word ;
 
 // long = 0x0..0xFFFFFFFF = 0x80000000..0x7FFFFFFF in 2's CF
 // >> long is equivalent to C int on this platform (Linux x86_64) -- actual C long is 8 bytes
 
-typedef  char   boolean ;
+typedef  unsigned char  boolean ;
 typedef  char*  string ;
 
 enum    bit { False, True }; // True = 1, False = 0
@@ -214,7 +216,7 @@ void MnemoInit()
 //    The function returns 0x0046  %(0000 0000 0100 0110)
 word GetBits( word V, byte FirstBit, byte LastBit )
 {
-  return( (V >> FirstBit) & ((2<<(LastBit-FirstBit)) - 1) );
+  return( (V >> FirstBit) & ((2 << (LastBit-FirstBit)) - 1) );
 }
 
 // Gets one word from V
@@ -229,8 +231,9 @@ word GetWord( int V, enum sigbit MSW )
     if( MSW == Least )
       TmpW = ( V & 0x0000FFFF );
     else
+      // should NEVER happen
       {
-        printf( "*** ERROR >> GetWord() received invalid MSW bit '%d' \n", MSW );
+        printf( "*** ERROR: GetWord() received invalid MSW bit '%d' \n", MSW );
         H = True ;
         return 0 ;
       }
@@ -278,6 +281,7 @@ void SetWord( int* V, enum sigbit MSW, word Value )
     if( MSW == Least )
       *V = ( (*V & 0xFFFF0000) | Value );
     else
+      // should NEVER happen
       {
         printf( "*** ERROR >> SetWord() received invalid MSW bit '%d' \n", MSW );
         H = True ;
