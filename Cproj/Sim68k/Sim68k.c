@@ -100,7 +100,7 @@ boolean Loader( string name )
   
   return True ;
   
-}// Loader()
+}
 
 // Copies an element (Byte, Word, Long) from memory\CPU to CPU\memory.
 // Verifies if we are trying to access an address outside the range allowed for addressing [0x0000..0x1000].
@@ -171,7 +171,7 @@ void accessMemory( enum dataSize dsz )
       printf( "*** ERROR >> accessMemory() uses the invalid address %#X at PC = %d\n", MAR, (PC-2) );
       H = True ; // End of simulation...! 
     }
-}// accessMemory()
+}
 
 // Fetch the OpCode from memory 
 void FetchOpCode()
@@ -184,7 +184,7 @@ void FetchOpCode()
   accessMemory( wordSize );
   OpCode = GetWord( MDR, Least ); // get LSW from MDR
   
-}// FetchOpCode()
+}
 
 // Update the fields OpId, DS, numOprd, M1, R1, M2, R2 and Data according to given format.
 // Uses GetBits() 
@@ -221,7 +221,7 @@ void DecodeInstr()
               numOprd, (PC-2) );
       H = True ;
     }  
-}// DecodeInstr()
+}
 
 // Fetch the operands, according to their number (as stored in variable 'numOprd') and addressing modes (M1 or M2)
 void FetchOperands()
@@ -257,7 +257,7 @@ void FetchOperands()
     H = True ;
   }
 
-}// FetchOperands()
+}
 
 /****************************************************************************
   Since many instructions will make local fetches between temporary registers
@@ -324,7 +324,7 @@ void FillTmpReg( int* tmpReg,            // tmp Register to modify - TMPS, TMPD 
              H = True ;
   }// switch mode
   
-}// FillTmpReg()
+}
 
 // Transfer the contents of temporary register to Register OR Memory 
 void SetResult( int* tmpReg,            // Source Register (TMPD...)     
@@ -391,7 +391,7 @@ void SetResult( int* tmpReg,            // Source Register (TMPD...)
             H = True ;
   }// switch mode
   
-}// SetResult()
+}
 
 // Status bits Z & N are often set the same way in many instructions
 // A function would be useful to do this        
@@ -416,7 +416,7 @@ void SetZN( int tmpReg )
              H = True ;
   }
 
-}// SetZN()
+}
 
 // The calculations to find V & C are more complex but are simplified by the use of Sm, Dm, Rm
 // It would be a good Idea to make a procedure to find these values                                                   
@@ -438,7 +438,7 @@ void SetSmDmRm( int tmpSrc, int tmpDst, int tmpRes )
   Dm = ( GetBits(tmpDst, mostSigBit, mostSigBit) == 1 );
   Rm = ( GetBits(tmpRes, mostSigBit, mostSigBit) == 1 );
   
-}// SetSmDmRm()
+}
 
 /********************************************************************
   The execution of each instruction is done via its micro-program   
@@ -447,6 +447,7 @@ void ExecInstr()
 {
   byte i ; // counter 
   word tmpA ;
+  char input[16]; // to capture command line input by iINP
   
   if( nDebugLevel > 0 )
     printf( "\tExecInstr() %s (%s): OpAd1 = %d, OpAd2 = %d, M1 = %d, R1 = %d, M2 = %d, R2 = %d\n",
@@ -820,7 +821,10 @@ void ExecInstr()
                           return ;
                }
                printf( ": " );
-               scanf( "%x", &TMPD );
+//               scanf( "%x", &TMPD );
+               // have to distinguish between hex and decimal input
+               scanf( "%s", input );
+               TMPD = (int)strtol(input, (char**)NULL, 0);
                SetZN( TMPD );
                C = False;
                V = False;
@@ -884,8 +888,7 @@ void Init()
   Z = False;
   N = False;
   H = False;
-  
-}// Init()
+}
 
 // Fetch-Execute Cycle simulated
 void Controller()
@@ -903,8 +906,7 @@ void Controller()
   while( H == False );
   
   puts( "\n\tEnd of Fetch-Execute Cycle" );
-  
-}// Controller()
+}
 
 /*
  *  MAIN
@@ -912,7 +914,7 @@ void Controller()
 int main( int argc, char* argv[] )
 {
   char option ; // option chosen from the menu by the user
-  char program_name[ memorySize ];
+  char program_name[ memorySize ]; // memorySize here just a convenient large int to give lots of room for path and name
   
   if( argc > 1 )
     nDebugLevel = atoi( argv[1] );
@@ -966,5 +968,4 @@ int main( int argc, char* argv[] )
   
   puts( "\tPROGRAM ENDED" );
   return 0 ;
-
-}// main()
+}
