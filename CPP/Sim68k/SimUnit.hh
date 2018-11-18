@@ -82,11 +82,11 @@ namespace mhs_cpp_sim68k
   enum twobits  { byte0, byte1, byte2, byte3 };
 
   // 0x0..0xFF = 0x80..0x7F in 2's CF
-  /* NEEDS to be an unsigned char to work properly */
+  /// NEEDS to be an unsigned char to work properly
   typedef  unsigned char  byte ;
 
   // 0x0..0xFFFF = 0x8000..0x7FFF in 2's CF
-  /* NEEDS to be an unsigned short to work properly */
+  /// NEEDS to be an unsigned short to work properly
   typedef  unsigned short  word ;
 
   // long = 0x0..0xFFFFFFFF = 0x80000000..0x7FFFFFFF in 2's CF
@@ -107,9 +107,10 @@ namespace mhs_cpp_sim68k
 
   const word memorySize = 4097 ; // hex values 0x0000 to 0x1000
 
-  long nDebugLevel = 1 ;
+  long nDebugLevel = 0 ;
 
-  /***************************************************************************
+  /**
+   ***************************************************************************
 
    Functions for bit manipulation.
   
@@ -120,13 +121,13 @@ namespace mhs_cpp_sim68k
   
   ****************************************************************************/
   
-  // Returns a substring of bits between FirstBit and LastBit from V
-  // Ex:                    1111 11
-  //    Bit Positions:     5432 1098 7654 3210
-  //    V = 0x1234     (or %0001 0010 0011 0100)
-  //    FirstBit = 3, LastBit = 9
-  //    The bits from 3 to 9 are %10 0011 0
-  //    The function returns 0x0046  (%0000 0000 0100 0110)
+  /* Returns a substring of bits between FirstBit and LastBit from V
+     Ex:                   1111 11
+        Bit Positions:     5432 1098 7654 3210
+        V = 0x1234    (or %0001 0010 0011 0100)
+        FirstBit = 3, LastBit = 9
+        The bits from 3 to 9 are %10 0011 0
+        The function returns 0x0046  (%0000 0000 0100 0110)  */
   word getBits( const word V, const byte FirstBit, const byte LastBit )
   {
     return( (V >> FirstBit) & ((2<<(LastBit-FirstBit)) - 1) );
@@ -177,145 +178,137 @@ namespace mhs_cpp_sim68k
         *V = ( (*V & 0xFFFF0000) | val );
   }
 
-  /*
+  /**
    *  CLASSES
    *=========================================================================================================*/
 
   class Processor
   {
     public:
-      Processor()
-        : mem(this),
-          ctrl(this, mem)
+      /// Constructor
+      Processor(): mem(), ctrl(mem)
       {
-        mnemoInit();
+        MnemoInit();
       }
 
-      /*
-       *   FUNCTIONS
-       *=========================================================================================================*/
+     /**
+      *   FUNCTIONS
+      *=========================================================================================================*/
 
       // Initializes Mnemo with strings corresponding to each instruction
       // - to have a more useful display of each opCode
-      void mnemoInit();
+      void MnemoInit();
 
       // Read into memory a machine language program contained in a file
       bool loadProgram(string);
 
-      // Determines the format of the instruction: return True if F1, False if F2
-      bool formatF1(byte);
-
       // Fetch-Execute Cycle simulated
-      void control();
+      void start();
 
-      int  getTmpReg(int);
-      void setTmpReg(int, int);
-      word getMar();
-      void setMar(word);
-      word getMdr();
-      void setMdr(word);
+     /**
+      *   INNER CLASSES
+      *=========================================================================================================*/
 
-  // store information
-  class Memory {
-    public:
-      // Constructor
-      Memory(Processor* proc): p(proc)
-      {
-        memory = new byte[memorySize];
-      }
+      // TODO: Not necessary that Memory or Controller are part of a Processor, so separate these as independent classes
 
-      // Copies an element (Byte, Word, Long) from memory\CPU to CPU\memory.
-      // Verifies if we are trying to access an address outside the range allowed for addressing [0x0000..0x1000].
-      // Uses the RW (read|write) bit.
-      // Parameter dsz determines the data size (byte, word, int/long).
-      void access(dataSize);
+      /// store information
+      class Memory {
+        public:
+          /// Constructor
+          Memory()
+          {
+            memory = new byte[memorySize];
+          }
 
-      void load(byte, byte);
+          /* Copies an element (Byte, Word, Long) from memory\CPU to CPU\memory.
+             Verifies if we are trying to access an address outside the range allowed for addressing [0x0000..0x1000].
+             Uses the RW (read|write) bit.
+             Parameter dsz determines the data size (byte, word, int/long).  */
+          void access(dataSize);
 
-    private:
-      byte* memory; // store the binary program
-      Processor* p;
-  };
+          /// store the original program data
+          void load(byte, byte);
 
-  // fetch and execute
-  class Controller {
-    public:
-      // Constructors
-      Controller(Processor* proc, Memory mry)
-        : p(proc), mem(mry), OpId(0), numOprd(0), dSize(byteSize), opcData(0), R1(0), R2(0),
-          M1(DATA_REGISTER_DIRECT), M2(DATA_REGISTER_DIRECT), Sm(false), Dm(false), Rm(false)
-      { }
+        private:
+          byte* memory; // store the binary program
+      };
 
-      // Generic error verification function, with message display,
-      // if Cond is False, display an error message (including the OpName)
-      // The Halt Status bit will also be set if there is an Error.
-      bool checkCond( bool, string );
+      /// fetch and execute
+      class Controller {
+        public:
+          /// Constructor
+          Controller(Memory mry)
+            : mem(mry), OpId(0), numOprd(0), opcData(0), R1(0), R2(0),
+              M1(DATA_REGISTER_DIRECT), M2(DATA_REGISTER_DIRECT), Sm(false), Dm(false), Rm(false)
+          { }
 
-      // return the "number of bytes"
-      byte numBytes(dataSize);
+          // Generic error verification function, with message display,
+          // if Cond is False, display an error message (including the OpName)
+          // The Halt Status bit will also be set if there is an Error.
+          bool checkCond(bool, string);
 
-      // Fetch the OpCode from memory
-      void fetchOpCode();
+          // return the "number of bytes"
+          byte numBytes(dataSize);
 
-      // Update the fields OpId, DS, numOprd, M1, R1, M2, R2 and Data according to given format.
-      // Uses getBits()
-      void decodeInstr();
+          // Determines the format of the instruction: return True if F1, False if F2
+          bool formatF1(byte);
 
-      // Fetch the operands, according to their number (numOprd) & addressing modes (M1 or M2)
-      void fetchOperands();
+          // Fetch the OpCode from memory
+          void fetchOpCode();
 
-      // Status bits Z & N are often set the same way in many instructions
-      // A function would be useful to do this
-      void setZN( int tmpReg );
+          // Update the fields OpId, DS, numOprd, M1, R1, M2, R2 and Data according to given format.
+          // Uses getBits()
+          void decodeInstr();
 
-      // The calculations to find V & C are more complex but are simplified by the use of Sm, Dm, Rm
-      // It would be a good Idea to make a procedure to find these values
-      void setSmDmRm( int tmpSrc, int tmpDst, int tmpRes );
+          // Fetch the operands, according to their number (numOprd) & addressing modes (M1 or M2)
+          void fetchOperands();
 
-      // Transfer data in the required temporary register
-      void fillTmpReg( int*        reg,      // tmp Register to modify - TMPS, TMPD or TMPR
-                       word        opAddrNo, // address of Operand (OpAddr1 | OpAddr2), for addressMode 3
-                       dataSize    dsz,      // Data Size
-                       addressmode mode,     // required Addressing Mode
-                       byte        regNo    ); // Register number for A[n] or D[n]
+          // Status bits Z & N are often set the same way in many instructions
+          // A function would be useful to do this
+          void setZN(int);
 
-      // Transfer the contents of temporary register to Register OR Memory
-      void setResult( int         tmpReg,         // Source Register (TMPD...)
-                      word        OpAddrNo,       // Operand Address (OpAddr1...)
-                      dataSize    dsz,        // Data Size
-                      addressmode mode,    // required Addressing Mode
-                      byte        RegNo        ); // Register Number for A[n] or D[n]
+          // The calculations to find V & C are more complex but are simplified by the use of Sm, Dm, Rm
+          // It would be a good Idea to make a procedure to find these values
+          void setSmDmRm(int, int, int);
 
-      /********************************************************************
-        The execution of each instruction is done via its micro-program
-      *********************************************************************/
-      void execInstr();
+          // Transfer data in the required temporary register
+          void fillTmpReg( int*        ,  // tmp Register to modify - TMPS, TMPD or TMPR
+                           word        ,  // address of Operand (OpAddr1 | OpAddr2), for addressMode 3
+                           dataSize    ,  // Data Size
+                           addressmode ,  // required Addressing Mode
+                           byte        ); // Register number for A[n] or D[n]
 
-      word getOpCode();
-      void setOpCode(word w);
+          // Transfer the contents of temporary register to Register OR Memory
+          void setResult( int         ,  // Source Register (TMPD...)
+                          word        ,  // Operand Address (OpAddr1...)
+                          dataSize    ,  // Data Size
+                          addressmode ,  // required Addressing Mode
+                          byte        ); // Register Number for A[n] or D[n]
 
-    private:
-      Processor* p;
-      Memory mem;
+          ///  The execution of each instruction is done via its micro-program
+          void execInstr();
 
-      byte OpId ; // numeric id for opCodes
-      byte numOprd ;// Number of necessary operands = opCode bit P + 1
-      dataSize dSize ;
-      // store data from opCode for Format F2
-      byte opcData ;
-      // temp storage for Register # (from opCode) for operands 1 & 2
-      byte R1, R2 ;
-      // temp storage for address Mode (from opCode) for operands 1 & 2
-      addressmode M1, M2 ;
-      // Most Significant Bits of TMPS, TMPD, & TMPR
-      bool Sm, Dm, Rm ;
-  };
+        private:
+          Memory mem;
+
+          byte OpId ;    // numeric id for opCodes
+          byte numOprd ; // Number of necessary operands = opCode bit P + 1
+          byte opcData ; // store data from opCode for Format F2
+
+          // temp storage for Register # (from opCode) for operands 1 & 2
+          byte R1, R2 ;
+          // temp storage for address Mode (from opCode) for operands 1 & 2
+          addressmode M1, M2 ;
+          // Most Significant Bits of TMPS, TMPD, & TMPR
+          bool Sm, Dm, Rm ;
+      };
 
     private:
+     /**
+      *   VARIABLES
+      *=========================================================================================================*/
       Memory mem;
       Controller ctrl;
-      friend class Memory;
-      friend class Controller;
   };
 
 } // namespace mhs_cpp_sim68k

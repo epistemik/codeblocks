@@ -17,9 +17,11 @@
 
 namespace mhs_cpp_sim68k
 {
-  /*
+  /**
    *  VARIABLES
    *=========================================================================================================*/
+
+  // TODO: most of these should probably be member variables of class Controller for an acceptable C++ implementation
 
   string Mnemo[ iHLT + 1 ]; // Mnemonic string for opCodes
 
@@ -44,12 +46,12 @@ namespace mhs_cpp_sim68k
   bit  RW ;   // read/write
   dataSize DS ;
 
-  /*
+  /**
    *   FUNCTIONS
    *=========================================================================================================*/
 
   // Read into memory a machine language program contained in a file
-  bool Processor::loadProgram( string filename )
+  bool Processor::loadProgram( string input )
   {
     bool inComment = false ;
     bool inHex = false;
@@ -62,12 +64,15 @@ namespace mhs_cpp_sim68k
 
     string msg ; // error handling
 
+    string inputFolder = "/home/marksa/dev/CodeBlocks/Cproj/Sim68k/in/" ;
+    string filename = inputFolder + input ;
+
     try
     {
       ifstream inputfile( filename.c_str() );
       if( !inputfile )
       {
-        msg = string( "\nError occurred opening file: " ) + string( filename );
+        msg = string( "\nError occurred trying to open file: " ) + string( filename );
         throw msg ;
       }
       else
@@ -108,10 +113,8 @@ namespace mhs_cpp_sim68k
             hex2 = string(1, ch) ;
             hexVal = strtol( (hex1 + hex2).c_str(), (char**)NULL, 16 );
             if( nDebugLevel > 0 ) {
-              cout.setf(ios_base::hex, ios_base::basefield);
-              cout << "Processor::loadProgram(): Read value '" << hexVal ;
-              cout.setf(ios_base::dec, ios_base::basefield);
-              cout << "' into memory at location: " << address << endl;
+              cout << "Processor::loadProgram(): Read value '" << hex << hexVal ;
+              cout << "' into memory at location: " << dec << address << endl;
             }
             mem.load(address, (byte)hexVal);
             address++ ;
@@ -136,95 +139,98 @@ namespace mhs_cpp_sim68k
     catch( string& msg )
     {
       cout.flush();
-      sleep( 1 ); // let any cout output finish
+      sleep( 1 ); // let any cout finish
       cerr << msg << "\n" << endl;
       sleep( 2 );
+      return false ;
     }
     catch(...)
     {
       cout.flush();
-      sleep( 1 ); // let any cout output finish
+      sleep( 1 ); // let any cout finish
       cerr << "UNSPECIFIED ERROR!" << endl;
+      return false ;
     }
 
-    cout << "Program loaded '" << address << "' bytes in memory." << endl << endl;
+    cout << "Program loaded " << address << " bytes in memory." << endl;
 
     return true ;
   }
 
   void Processor::Memory::load( byte location, byte data )
   {
-    if( nDebugLevel > 2 ) {
-      cout.setf(ios_base::hex, ios_base::basefield);
-      cout << data << endl;
-      cout << location << endl;
-      cout.setf(ios_base::dec, ios_base::basefield);
-      cout << "Memory::load(): Read value '" << data << "' into memory at location: " << location << endl;
-    }
+    if( nDebugLevel > 2 )
+      cout << "Memory::load(): Read value $" << hex << (int)data
+           << " into memory at location: " << dec << (int)location << endl;
     memory[location] = data ;
   }
 
-  // Copies an element (Byte, Word, Long) from memory\CPU to CPU\memory.
-  // Verifies if we are trying to access an address outside the range allowed for addressing [0x0000..0x1000].
-  // Uses the RW (read|write) bit.
-  // Parameter dsz determines the data size (byte, word, int/long).
+  /* Copies an element (Byte, Word, Long) from memory\CPU to CPU\memory.
+     Verifies if we are trying to access an address outside the range allowed for addressing [0x0000..0x1000].
+     Uses the RW (read|write) bit.
+     Parameter dsz determines the data size (byte, word, int/long)  */
   void Processor::Memory::access( dataSize dsz )
   {
     cout.setf(ios_base::hex, ios_base::basefield);
 
 //      MAR = 0x1001 ; // debug
-    if( (MAR >= 0) && (MAR < memorySize) ) // Valid Memory Address
+    if( (MAR >= 0) && (MAR < memorySize) ) // valid Memory Address range
     {
       if( RW ) // Read = copy an element from memory to CPU
       {
         switch( dsz )
         {
-          case byteSize: MDR = memory[MAR] ; break;
+          case byteSize: MDR = memory[MAR] ;
+                         break;
 
-          case wordSize: MDR = memory[MAR] * 0x100 + memory[MAR+1] ; break;
+          case wordSize: MDR = memory[MAR] * 0x100 + memory[MAR+1] ;
+                         break;
 
           case longSize: MDR = ( (memory[MAR]   * 0x1000000) & 0xFF000000 ) |
                                ( (memory[MAR+1] * 0x10000)   & 0x00FF0000 ) |
                                ( (memory[MAR+2] * 0x100)     & 0x0000FF00 ) |
-                               (  memory[MAR+3]              & 0x000000FF ); break;
+                               (  memory[MAR+3]              & 0x000000FF );
+                         break;
 
-          default: cout << "*** ERROR >> Memory::access() received invalid data size '" << sizeName[dsz]
+          default: cout << "*** ERROR >> Memory::access() received invalid data size '" << dsz
                         << "' at PC = " << PC-2 << endl;
           H = true ;
         }
         if( nDebugLevel > 0 )
-          cout << "Memory::access(" << sizeName[dsz] << ") READ: MDR now has value: " << MDR << endl;
+          cout << "Memory::access(" << sizeName[dsz] << ") READ: MDR now has value $" << MDR << endl;
       }
-      else
-  //      if( RW == Write ) // Write = copy an element from the CPU to memory
+      else // RW false: Write = copy an element from the CPU to memory
         {
           switch( dsz )
           {
             case byteSize:
                      memory[MAR] = MDR % 0x100 ; // LSB: 8 last bits
                      if( nDebugLevel > 0 )
-                       cout << "Memory::access(" << sizeName[dsz] << ") WRITE: memory[" << MAR
-                            << "] now has value = " << (int)memory[MAR] << endl;
+                       cout << "Memory::access(" << sizeName[dsz] << ") WRITE: memory[" << dec << MAR
+                            << "] now has value $" << hex << (int)memory[MAR] << endl;
                      break;
+
             case wordSize:
                      memory[MAR] = (MDR / 0x100) % 0x100 ; // MSB: 8 first bits
                      memory[MAR+1] = MDR % 0x100 ; // LSB: 8 last bits
                      if( nDebugLevel > 0 )
-                       cout << "Memory::access(" << sizeName[dsz] << ") WRITE: memory["
-                            << MAR << "] now has value = " << (int)memory[MAR]
-                            << " memory[" << MAR+1 << "] now has value = " << (int)memory[MAR+1] << endl;
+                       cout << "Memory::access(" << sizeName[dsz] << ") WRITE: memory[" << dec
+                            << MAR << "] now has value $" << hex << (int)memory[MAR] << endl
+                            << "\t\t\t\tmemory[" << dec << MAR+1 << "] now has value $" << hex << (int)memory[MAR+1]
+                            << endl;
                      break;
+
             case longSize:
                      memory[MAR]   = (MDR >> 24) & 0x000000FF ; // MSB: 8 first bits
                      memory[MAR+1] = (MDR >> 16) & 0x000000FF ;
                      memory[MAR+2] = (MDR >> 8 ) & 0x000000FF ;
                      memory[MAR+3] =  MDR % 0x100 ; break;
                      if( nDebugLevel > 0 )
-                       cout << "Memory::access(" << sizeName[dsz] << ") WRITE: memory["
-                            << MAR << "] now has value = " << (int)memory[MAR]
-                            << " memory[" << MAR+1 << "] now has value = " << (int)memory[MAR+1]
-                            << " memory[" << MAR+2 << "] now has value = " << (int)memory[MAR+2]
-                            << " memory[" << MAR+2 << "] now has value = " << (int)memory[MAR+3] << endl;
+                       cout << "Memory::access(" << sizeName[dsz] << ") WRITE: memory[" << dec
+                            << MAR << "] now has value $" << hex << (int)memory[MAR] << endl
+                            << "\t\t\t\tmemory[" << dec << MAR+1 << "] now has value $" << hex << (int)memory[MAR+1] << endl
+                            << "\t\t\t\tmemory[" << dec << MAR+2 << "] now has value $" << hex << (int)memory[MAR+2] << endl
+                            << "\t\t\t\tmemory[" << dec << MAR+2 << "] now has value $" << hex << (int)memory[MAR+3] << endl;
                      break;
             default:
                    cout << "*** ERROR >> Memory::access() received invalid data size '" << dsz
@@ -233,7 +239,7 @@ namespace mhs_cpp_sim68k
           }
        }
     }
-    else // Invalid Memory Address
+    else // INVALID Memory Address
       {
         cout << "*** ERROR >> Memory::access() uses the invalid address " << MAR << " at PC = " << PC-2 << endl;
         H = true ; // End of simulation...!
@@ -308,9 +314,9 @@ namespace mhs_cpp_sim68k
     }// switch mode
   }
 
-  // Generic error verification function, with message display,
-  // if Cond is False, display an error message (including the OpName)
-  // The Halt Status bit will also be set if there is an Error.
+  /** Generic error verification function, with message display,
+      if Cond is False, display an error message (including the OpName)
+      The Halt Status bit will also be set if there is an Error  */
   bool Processor::Controller::checkCond( bool Cond, string Message )
   {
     if( Cond )
@@ -332,7 +338,7 @@ namespace mhs_cpp_sim68k
   void Processor::Controller::fetchOpCode()
   {
     if( nDebugLevel > 0 )
-      cout << "\nFetchOpCode(): at PC = " << PC << endl;
+      cout << "\nFetchOpCode(): at PC = " << dec << PC << endl;
 
     RW  = true ;
     MAR = PC ;
@@ -344,20 +350,20 @@ namespace mhs_cpp_sim68k
   // Update the fields OpId, DS, numOprd, M1, R1, M2, R2 and Data according to given format
   void Processor::Controller::decodeInstr()
   {
-      DS    = (dataSize)getBits( OpCode,  9, 10 );
-     OpId   = getBits( OpCode, 11, 15 );
+         DS = (dataSize)getBits( OpCode,  9, 10 );
+       OpId = getBits( OpCode, 11, 15 );
     numOprd = getBits( OpCode,  8,  8 ) + 1 ;
 
     if( nDebugLevel > 0 )
-      cout << "DecodeInstr(OpCode " << OpCode << "): at PC = " << PC-2 << " : OpId = " << Mnemo[OpId]
-           << ", size = " << sizeName[DS] << ", numOprnd = " << (int)numOprd << endl;
+      cout << "DecodeInstr(OpCode $" << uppercase << hex << setw(4) << OpCode << ") at PC = " << dec << PC-2
+           << " : OpId = " << Mnemo[OpId] << ", size = " << sizeName[DS] << ", numOprnd = " << (int)numOprd << endl;
 
     if( numOprd > 0 ) // SHOULD ALWAYS BE TRUE!
     {
       M2 = (addressmode)getBits( OpCode, 1, 3 );
       R2 = getBits( OpCode, 0, 0 );
       
-      if( p->formatF1(OpId) )
+      if( formatF1(OpId) )
       {
         if( (OpId < iDSR) )
         {
@@ -378,6 +384,10 @@ namespace mhs_cpp_sim68k
              << "' at PC = " << PC-2 << endl;
         H = true ;
       }
+
+    if( nDebugLevel > 0 )
+      cout << "\t\t\t\t\t M1 = " << M1 << ", M2 = " << M2 << ", R1 = " << (int)R1 << ", R2 = " << (int)R2
+           << ", opcData = " << (int)opcData << endl;
   }
 
   // Fetch the operands, according to their number (numOprd) & addressing modes (M1 or M2)
@@ -390,7 +400,7 @@ namespace mhs_cpp_sim68k
     RW = true ;
 
     // Fetch the address of 1st operand (in OpAddr1)
-    if( p->formatF1(OpId) && (M1 == RELATIVE_ABSOLUTE) )
+    if( formatF1(OpId) && (M1 == RELATIVE_ABSOLUTE) )
     {
       MAR = PC ;
       mem.access( wordSize );
@@ -409,7 +419,7 @@ namespace mhs_cpp_sim68k
     }
 
     // Check invalid number of operands.
-    if( (numOprd == 2) && (!p->formatF1(OpId)) )
+    if( (numOprd == 2) && (!formatF1(OpId)) )
     {
       cout << "*** ERROR >> Controller::fetchOperands() has an invalid number of operands for " << Mnemo[OpId]
            << " at PC = " << PC-2 << endl;
@@ -487,8 +497,8 @@ namespace mhs_cpp_sim68k
     }
   }
 
-  // Status bits Z & N are often set the same way in many instructions
-  // A function would be useful to do this
+  /* Status bits Z & N are often set the same way in many instructions
+     A function would be useful to do this  */
   void Processor::Controller::setZN( int tmpReg )
   {
     switch( DS )
@@ -511,8 +521,8 @@ namespace mhs_cpp_sim68k
     }
   }
 
-  // The calculations to find V & C are more complex but are simplified by the use of Sm, Dm, Rm
-  // It would be a good Idea to make a procedure to find these values
+  /* The calculations to find V & C are more complex but are simplified by the use of Sm, Dm, Rm
+     It would be a good Idea to make a procedure to find these values  */
   void Processor::Controller::setSmDmRm( int tmpSrc, int tmpDst, int tmpRes )
   {
     byte mostSigBit = 15 ; // wordSize
@@ -547,8 +557,8 @@ namespace mhs_cpp_sim68k
            << "): OpAd1 = " << OpAddr1 << ", OpAd2 = " << OpAddr2
            << ", M1 = " << M1 << ", R1 = " << (int)R1 << ", M2 = " << M2 << ", R2 = " << (int)R2 << endl;
 
-    // Execute the instruction according to opCode
-    // Use a CASE structure where each case corresponds to an instruction & its micro-program
+    /* Execute the instruction according to opCode
+       Use a CASE structure where each case corresponds to an instruction & its micro-program  */
     switch( OpId )
     {
       // addition
@@ -561,7 +571,7 @@ namespace mhs_cpp_sim68k
                // 3. Compute TMPR using TMPS & TMPD
                TMPR = TMPS + TMPD ;
                if( nDebugLevel > 0 )
-                 cout << "TMPR(" << TMPR << ") = TMPS(" << TMPS << ") + TMPD(" << TMPD << ")" << endl;
+                 cout << "TMPR($" << TMPR << ") = TMPS($" << TMPS << ") + TMPD($" << TMPD << ")" << endl;
                // 4. Update status bits HZNVC if necessary  
                setZN( TMPR );
                setSmDmRm( TMPS, TMPD, TMPR );
@@ -578,7 +588,7 @@ namespace mhs_cpp_sim68k
                 // Sign extension if W or L ??
                 TMPR = TMPD + TMPS ;
                 if( nDebugLevel > 0 )
-                  cout << "TMPR(" << TMPR << ") = TMPS(" << TMPS << ") + TMPD(" << TMPD << ")" << endl;
+                  cout << "TMPR($" << TMPR << ") = TMPS($" << TMPS << ") + TMPD($" << TMPD << ")" << endl;
                 setZN( TMPR );
                 setSmDmRm( TMPS, TMPD, TMPR );
                 V = ( Sm & Dm & ~Rm ) | ( ~Sm & ~Dm & Rm );
@@ -591,7 +601,7 @@ namespace mhs_cpp_sim68k
                fillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
                TMPR = TMPD - TMPS ;
                if( nDebugLevel > 0 )
-                 cout << "TMPR(" << TMPR << ") = TMPD(" << TMPD << ") - TMPS(" << TMPS << ")" << endl;
+                 cout << "TMPR($" << TMPR << ") = TMPD($" << TMPD << ") - TMPS($" << TMPS << ")" << endl;
                setZN( TMPR );
                setSmDmRm( TMPS, TMPD, TMPR );
                V = ( ~Sm & Dm & ~Rm ) | ( Sm & ~Dm & Rm );
@@ -606,7 +616,7 @@ namespace mhs_cpp_sim68k
                 // Sign extension if W or L ??
                 TMPR = TMPD - TMPS;
                 if( nDebugLevel > 0 )
-                  cout << "TMPR(" << TMPR << ") = TMPD(" << TMPD << ") - TMPS(" << TMPS << ")" << endl;
+                  cout << "TMPR($" << TMPR << ") = TMPD($" << TMPD << ") - TMPS($" << TMPS << ")" << endl;
                 setZN( TMPR );
                 setSmDmRm( TMPS, TMPD, TMPR );
                 V = ( ~Sm & Dm & ~Rm ) | ( Sm & ~Dm & Rm );
@@ -625,7 +635,7 @@ namespace mhs_cpp_sim68k
                     TMPD = TMPD | 0xFFFF0000 ;
                   TMPR = TMPD * TMPS;
                   if( nDebugLevel > 0 )
-                    cout << "TMPR(" << TMPR << ") = TMPD(" << TMPD << ") * TMPS(" << TMPS << ")" << endl;
+                    cout << "TMPR($" << TMPR << ") = TMPD($" << TMPD << ") * TMPS($" << TMPS << ")" << endl;
                   setZN( TMPR );
                   V = false;
                   C = false;
@@ -659,7 +669,7 @@ namespace mhs_cpp_sim68k
                         setWord( &TMPR, MOST, (TMPD % getWord(TMPS, LEAST)) );
                       };
                     if( nDebugLevel > 0 )
-                      cout << "TMPR(" << TMPR << ") = TMPD(" << TMPD << ") / TMPS(" << TMPS << ")" << endl;
+                      cout << "TMPR($" << TMPR << ") = TMPD($" << TMPD << ") / TMPS($" << TMPS << ")" << endl;
                     setZN( TMPR );
                     C = false ;
                     setResult( TMPR, OpAddr2, DS, M2, R2 );
@@ -699,7 +709,7 @@ namespace mhs_cpp_sim68k
                fillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
                TMPR = TMPD & TMPS ;
                if( nDebugLevel > 0 )
-                 cout << "TMPR(" << TMPR << ") = TMPD(" << TMPD << ") & TMPS(" << TMPS << ")" << endl;
+                 cout << "TMPR($" << TMPR << ") = TMPD($" << TMPD << ") & TMPS($" << TMPS << ")" << endl;
                setZN( TMPR );
                V = false;
                C = false;
@@ -711,7 +721,7 @@ namespace mhs_cpp_sim68k
               fillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
               TMPR = TMPD | TMPS ;
               if( nDebugLevel > 0 )
-                cout << "TMPR(" << TMPR << ") = TMPD(" << TMPD << ") | TMPS(" << TMPS << ")" << endl;
+                cout << "TMPR($" << TMPR << ") = TMPD($" << TMPD << ") | TMPS($" << TMPS << ")" << endl;
               setZN( TMPR );
               V = false;
               C = false;
@@ -723,7 +733,7 @@ namespace mhs_cpp_sim68k
                fillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
                TMPR = TMPD ^ TMPS;
                if( nDebugLevel > 0 )
-                 cout << "TMPR(" << TMPR << ") = TMPD(" << TMPD << ") ^ TMPS(" << TMPS << ")" << endl;
+                 cout << "TMPR($" << TMPR << ") = TMPD($" << TMPD << ") ^ TMPS($" << TMPS << ")" << endl;
                setZN( TMPR );
                V = false;
                C = false;
@@ -745,22 +755,24 @@ namespace mhs_cpp_sim68k
                break;
       // shift right
       case iLSR:
-               // In Turbo Pascal, SHR did NOT sign-extend, whereas >> in C is "machine-dependent" and in this platform
-               // (Linux x86_64) it does sign extension for variables, so DO NOT get the proper answer for some operations.
-               // We want to ensure there is NEVER any sign extension, to duplicate the Pascal results, HOWEVER C does NOT
-               // sign extend CONSTANTS, so CANNOT correct for sign extension by doing this:
-               // TMPR = TMPS & ~( 0x80000000 >> (opcData-1) ) as the constant 0x80000000 is NOT extended
-               // Instead, need to put 0x80000000 in a register and proceed as below:
+               /**
+                In Turbo Pascal, SHR did NOT sign-extend, whereas >> in C is "machine-dependent" and in this platform
+                (Linux x86_64) it DOES sign extension for variables, so DO NOT get the proper answer for some operations.
+                We want to ensure there is NEVER any sign extension, to duplicate the Pascal results,
+                HOWEVER C does NOT sign-extend CONSTANTS, so CANNOT correct for sign extension by doing this:
+                TMPR = TMPS & ~( 0x80000000 >> (opcData-1) ) as the constant 0x80000000 is NOT extended!
+                Instead, need to put 0x80000000 in a register and proceed as below:
+                */
                fillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
                if( nDebugLevel > 0 )
-                 cout << "TMPD = " << TMPD << "; opcData = " << opcData << endl;
+                 cout << "TMPD = $" << TMPD << "; opcData = " << opcData << endl;
                TMPS = 0x80000000 ;
                TMPR = TMPS >> (opcData-1) ;
                if( nDebugLevel > 0 )
-                 cout << "TMPS = " << TMPS << "; TMPR = TMPS >> " << opcData-1 << " = " << TMPR << endl;
+                 cout << "TMPS = $" << TMPS << "; TMPR = TMPS >> " << dec << (int)(opcData-1) << " = $" << hex << TMPR << endl;
                TMPS = ~TMPR ;
                if( nDebugLevel > 0 )
-                 cout << "TMPS = ~TMPR = " << TMPS << endl;
+                 cout << "TMPS = ~TMPR = $" << TMPS << endl;
                TMPR = (TMPD >> opcData) & TMPS ;
                setZN( TMPR );
                V = false;
@@ -894,12 +906,12 @@ namespace mhs_cpp_sim68k
                }
                switch( M1 )
                {
-                 case DATA_REGISTER_DIRECT:    cout << "the register DR" << (int)R1 ; break;
-                 case ADDRESS_REGISTER_DIRECT: cout << "the register AR" << (int)R1 ; break;
+                 case DATA_REGISTER_DIRECT:    cout << "the register D" << (int)R1 ; break;
+                 case ADDRESS_REGISTER_DIRECT: cout << "the register A" << (int)R1 ; break;
                  
                  case ADDRESS_REGISTER_INDIRECT: 
                  case ADDRESS_REGISTER_INDIRECT_PREDEC: 
-                 case ADDRESS_REGISTER_INDIRECT_POSTINC: cout << "the memory address " << AR[R1]/*:4*/; break;
+                 case ADDRESS_REGISTER_INDIRECT_POSTINC: cout << "the memory address " << AR[R1] ; break;
                  
                  case RELATIVE_ABSOLUTE: cout << "the memory address " << OpAddr1 ; break;
                  
@@ -921,8 +933,8 @@ namespace mhs_cpp_sim68k
                fillTmpReg( &TMPS, OpAddr1, DS, M1, R1 );
                switch( M1 )
                {
-                 case DATA_REGISTER_DIRECT:      cout << "[ DR" << (int)R1 << " ] = "; break;
-                 case ADDRESS_REGISTER_DIRECT:   cout << "[ AR" << (int)R1 << " ] = "; break;
+                 case DATA_REGISTER_DIRECT:      cout << "[ D" << (int)R1 << " ]  = "; break;
+                 case ADDRESS_REGISTER_DIRECT:   cout << "[ A" << (int)R1 << " ]  = "; break;
 
                  case ADDRESS_REGISTER_INDIRECT: cout << "[$" << AR[R1] << " ] = "; break;
                  
@@ -933,7 +945,7 @@ namespace mhs_cpp_sim68k
                          
                  case ADDRESS_REGISTER_INDIRECT_PREDEC: cout << "[$" << AR[R1] << "] = "; break;
 
-                 case RELATIVE_ABSOLUTE: cout << "[$" << OpAddr1 << "] = "; break;
+                 case RELATIVE_ABSOLUTE: cout << "[$" << setw(4) << setfill('0') << OpAddr1 << "] = "; break;
                  
                  default: cout << "\n*** ERROR >> ExecInstr() invalid address mode '" << M1
                                << "' for instruction '" << Mnemo[OpId] << "' at PC = " << PC-2 << endl;
@@ -942,9 +954,9 @@ namespace mhs_cpp_sim68k
                }
                switch( DS )
                {
-                 case byteSize: cout << "$" << (TMPS & 0xff)   << " (" << sizeName[byteSize] << ")" << endl; break;
-                 case wordSize: cout << "$" << (TMPS & 0xffff) << " (" << sizeName[wordSize] << ")" << endl; break;
-                 case longSize: cout << "$" <<  TMPS           << " (" << sizeName[longSize] << ")" << endl; break;
+                 case byteSize: cout << "$" << setw(2) << (TMPS & 0xff)   << " (" << sizeName[byteSize] << ")" << endl; break;
+                 case wordSize: cout << "$" << setw(4) << (TMPS & 0xffff) << " (" << sizeName[wordSize] << ")" << endl; break;
+                 case longSize: cout << "$" << setw(8) <<  TMPS           << " (" << sizeName[longSize] << ")" << endl; break;
                  
                  default: cout << "\n*** ERROR >> ExecInstr() invalid data size '" << DS
                                << "' for instruction '" << Mnemo[OpId] << "' at PC = " << PC-2 << endl;
@@ -954,7 +966,7 @@ namespace mhs_cpp_sim68k
                break;
       // display status register
       case iDSR:
-               cout << "Status Bits = H:" << bitValue[H] << " N:" << bitValue[N] << " Z:" << bitValue[Z]
+               cout << "Status Bits: H:" << bitValue[H] << " N:" << bitValue[N] << " Z:" << bitValue[Z]
                     << " V:" << bitValue[V] << " C:" << bitValue[C] << endl;
                break;
       // halt
@@ -971,7 +983,7 @@ namespace mhs_cpp_sim68k
   }
 
   // Determines the format of the instruction: return True if F1, False if F2
-  bool Processor::formatF1( byte opid )
+  bool Processor::Controller::formatF1( byte opid )
   {
     if( (opid == iADDQ) || (opid == iSUBQ) || ((opid >= iLSL) && (opid <= iROR)) || (opid == iMOVQ) )
       return false ;
@@ -979,9 +991,9 @@ namespace mhs_cpp_sim68k
     return true ;
   }
 
-  // Initializes Mnemo with strings corresponding to each instruction
-  // - to have a more useful display of each opCode
-  void Processor::mnemoInit()
+  /* Initializes Mnemo with strings corresponding to each instruction
+     - to have a more useful display of each opCode  */
+  void Processor::MnemoInit()
   {
     Mnemo[iADD]   = "ADD";
     Mnemo[iADDQ]  = "ADDQ";
@@ -1018,8 +1030,12 @@ namespace mhs_cpp_sim68k
   }
 
   // Fetch-Execute Cycle simulated
-  void Processor::control()
+  void Processor::start()
   {
+    // set all hex outut to upper case and fill with '0'
+    cout.setf(ios_base::uppercase);
+    cout.fill('0');
+
     do // Repeat the Fetch-Execute Cycle until the Halt bit becomes true
     {
       ctrl.fetchOpCode();
@@ -1034,16 +1050,16 @@ namespace mhs_cpp_sim68k
     cout << endl << "\tEnd of Fetch-Execute Cycle" << endl;
   }
 
-} // namespace mhs_cpp_sim68k
+}
 
 using namespace mhs_cpp_sim68k ;
 
-/*
+/**
  *  MAIN
  **************************************************************************/
 int main( int argc, char* argv[] )
 {
-  char option ; // option chosen from the menu by the user
+  char option = '0' ; // option chosen from the menu by the user
   string input ;
   
   if( argc > 1 )
@@ -1071,11 +1087,13 @@ int main( int argc, char* argv[] )
   // Menu 
   while( option != QUIT )
   {
-    if( ! isspace(option) )
-      cout << "Your Option ('" << EXECUTE << "' to execute a program, '" << QUIT << "' to quit): " << endl;
+    cout << "Your Option ('" << EXECUTE << "' to execute a program, '" << QUIT << "' to quit): " << endl;
     
+    // get a character
     cin >> option ;
-    cout << "\nYour entry: " << option << endl;
+    // flush all the rest
+    cin.ignore(256, '\n');
+
     if( option != QUIT  &&  option != EXECUTE ) {
       cout << "\nYour input '" << option << "' was NOT acceptable. Please try again." << endl;
       continue ;
@@ -1088,7 +1106,7 @@ int main( int argc, char* argv[] )
                     cin >> input ;
                     if( proc.loadProgram(input + ".68b") ) {
                       // Start the processor
-                      proc.control();
+                      proc.start();
                     }
                     else
                         cout << "\nYour input '" << input << "' was NOT acceptable. Please try again." << endl;
@@ -1101,10 +1119,7 @@ int main( int argc, char* argv[] )
       
       default: cout << "Invalid Option. Please enter '" << EXECUTE << "' or '" << QUIT << "'" << endl;
     }
-    
   }
-  
   cout << "\tPROGRAM ENDED" << endl;
   return 0 ;
-
 }
