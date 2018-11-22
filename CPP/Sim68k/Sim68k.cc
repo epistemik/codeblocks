@@ -17,39 +17,6 @@
 
 namespace mhs_cpp_sim68k
 {
-  /**
-   *  VARIABLES
-   *=========================================================================================================*/
-
-  // TODO: most of these should probably be member variables of class Controller for an acceptable C++ implementation
-
-  string Mnemo[ iHLT + 1 ]; // Mnemonic string for opCodes
-
-  // The CPU registers
-  word PC ;               // Program Counter
-  int TMPD, TMPR, TMPS ;  // Temporary Registers D, R, S
-  word OpCode ;           // OPCODE of the current instruction
-  word OpAddr1, OpAddr2 ; // Operand Addresses
-
-  // status bits
-  bit C ; // Carry
-  bit V ; // Overflow
-  bit Z ; // Zero
-  bit N ; // Negative
-  bit H ; // Halt
-
-  int  DR[2] ; // Data Registers
-  word AR[2] ; // Address Registers
-
-  word MAR ;  // Memory Address Register
-  int  MDR ;  // Memory Data Register
-  bit  RW ;   // read/write
-  dataSize DS ;
-
-  /**
-   *   FUNCTIONS
-   *=========================================================================================================*/
-
   // Read into memory a machine language program contained in a file
   bool Processor::loadProgram( string input )
   {
@@ -157,7 +124,7 @@ namespace mhs_cpp_sim68k
     return true ;
   }
 
-  void Processor::Memory::load( byte location, byte data )
+  void Memory::load( byte location, byte data )
   {
     if( nDebugLevel > 2 )
       cout << "Memory::load(): Read value $" << hex << (int)data
@@ -168,8 +135,8 @@ namespace mhs_cpp_sim68k
   /* Copies an element (Byte, Word, Long) from memory\CPU to CPU\memory.
      Verifies if we are trying to access an address outside the range allowed for addressing [0x0000..0x1000].
      Uses the RW (read|write) bit.
-     Parameter dsz determines the data size (byte, word, int/long)  */
-  void Processor::Memory::access( dataSize dsz )
+     Parameter dsz determines the data size (byte, word, long)  */
+  void Memory::access( dataSize dsz, word MAR, long_68k* pMDR, bit RW, bit* pH )
   {
     cout.setf(ios_base::hex, ios_base::basefield);
 
@@ -180,39 +147,38 @@ namespace mhs_cpp_sim68k
       {
         switch( dsz )
         {
-          case byteSize: MDR = memory[MAR] ;
+          case byteSize: *pMDR = memory[MAR] ;
                          break;
 
-          case wordSize: MDR = memory[MAR] * 0x100 + memory[MAR+1] ;
+          case wordSize: *pMDR = memory[MAR] * 0x100 + memory[MAR+1] ;
                          break;
 
-          case longSize: MDR = ( (memory[MAR]   * 0x1000000) & 0xFF000000 ) |
-                               ( (memory[MAR+1] * 0x10000)   & 0x00FF0000 ) |
-                               ( (memory[MAR+2] * 0x100)     & 0x0000FF00 ) |
-                               (  memory[MAR+3]              & 0x000000FF );
+          case longSize: *pMDR = ( (memory[MAR]   * 0x1000000) & 0xFF000000 ) |
+                                 ( (memory[MAR+1] * 0x10000)   & 0x00FF0000 ) |
+                                 ( (memory[MAR+2] * 0x100)     & 0x0000FF00 ) |
+                                 (  memory[MAR+3]              & 0x000000FF );
                          break;
 
-          default: cout << "*** ERROR >> Memory::access() received invalid data size '" << dsz
-                        << "' at PC = " << PC-2 << endl;
-          H = true ;
+          default: cout << "*** ERROR >> Memory::access() received invalid data size: " << dsz << endl;
+          *pH = true ;
         }
         if( nDebugLevel > 0 )
-          cout << "Memory::access(" << sizeName[dsz] << ") READ: MDR now has value $" << MDR << endl;
+          cout << "Memory::access(" << sizeName[dsz] << ") READ: MDR now has value $" << *pMDR << endl;
       }
       else // RW false: Write = copy an element from the CPU to memory
         {
           switch( dsz )
           {
             case byteSize:
-                     memory[MAR] = MDR % 0x100 ; // LSB: 8 last bits
+                     memory[MAR] = *pMDR % 0x100 ; // LSB: 8 last bits
                      if( nDebugLevel > 0 )
                        cout << "Memory::access(" << sizeName[dsz] << ") WRITE: memory[" << dec << MAR
                             << "] now has value $" << hex << (int)memory[MAR] << endl;
                      break;
 
             case wordSize:
-                     memory[MAR] = (MDR / 0x100) % 0x100 ; // MSB: 8 first bits
-                     memory[MAR+1] = MDR % 0x100 ; // LSB: 8 last bits
+                     memory[MAR]   = (*pMDR / 0x100) % 0x100 ; // MSB: 8 first bits
+                     memory[MAR+1] =  *pMDR % 0x100 ; // LSB: 8 last bits
                      if( nDebugLevel > 0 )
                        cout << "Memory::access(" << sizeName[dsz] << ") WRITE: memory[" << dec
                             << MAR << "] now has value $" << hex << (int)memory[MAR] << endl
@@ -221,10 +187,10 @@ namespace mhs_cpp_sim68k
                      break;
 
             case longSize:
-                     memory[MAR]   = (MDR >> 24) & 0x000000FF ; // MSB: 8 first bits
-                     memory[MAR+1] = (MDR >> 16) & 0x000000FF ;
-                     memory[MAR+2] = (MDR >> 8 ) & 0x000000FF ;
-                     memory[MAR+3] =  MDR % 0x100 ; break;
+                     memory[MAR]   = (*pMDR >> 24) & 0x000000FF ; // MSB: 8 first bits
+                     memory[MAR+1] = (*pMDR >> 16) & 0x000000FF ;
+                     memory[MAR+2] = (*pMDR >> 8 ) & 0x000000FF ;
+                     memory[MAR+3] =  *pMDR % 0x100 ; break;
                      if( nDebugLevel > 0 )
                        cout << "Memory::access(" << sizeName[dsz] << ") WRITE: memory[" << dec
                             << MAR << "] now has value $" << hex << (int)memory[MAR] << endl
@@ -233,16 +199,15 @@ namespace mhs_cpp_sim68k
                             << "\t\t\t\tmemory[" << dec << MAR+2 << "] now has value $" << hex << (int)memory[MAR+3] << endl;
                      break;
             default:
-                   cout << "*** ERROR >> Memory::access() received invalid data size '" << dsz
-                        << "' at PC = " << PC-2 << endl;
-                   H = true ;
+                   cout << "*** ERROR >> Memory::access() received invalid data size: " << dsz << endl;
+                   *pH = true ;
           }
        }
     }
     else // INVALID Memory Address
       {
-        cout << "*** ERROR >> Memory::access() uses the invalid address " << MAR << " at PC = " << PC-2 << endl;
-        H = true ; // End of simulation...!
+        cout << "*** ERROR >> Memory::access() uses the invalid address: " << MAR << endl;
+        *pH = true ; // End of simulation...!
       }
   }
 
@@ -254,8 +219,8 @@ namespace mhs_cpp_sim68k
   *****************************************************************************/
 
   // Transfer data to the specified temporary register
-  void Processor::Controller::fillTmpReg(
-                   int*        tmpReg,   // tmp Register to modify - TMPS, TMPD or TMPR
+  void Controller::fillTmpReg(
+                   long_68k*   pReg,     // tmp Register to modify - TMPS, TMPD or TMPR
                    word        opAddrNo, // address of Operand (OpAddr1 | OpAddr2), for addressMode 3
                    dataSize    dsz,      // Data Size
                    addressmode mode,     // required Addressing Mode
@@ -266,36 +231,36 @@ namespace mhs_cpp_sim68k
     switch( mode )
     {
       case DATA_REGISTER_DIRECT:
-             *tmpReg = DR[regNo];
+             *pReg = DR[regNo];
              if( dsz == byteSize )
-               setByte( tmpReg, byte1, 0 );
+               setByte( pReg, byte1, 0 );
              if( dsz <= wordSize )
-               setWord( tmpReg, MOST, 0 );
+               setWord( pReg, MOST, 0 );
              break;
 
       case ADDRESS_REGISTER_DIRECT:
-             *tmpReg = AR[regNo];
+             *pReg = AR[regNo];
              break;
 
       case RELATIVE_ABSOLUTE:
              // We need to access memory, except for branching & MOVA.
              MAR = opAddrNo;
-             mem.access( dsz );
-             *tmpReg = MDR ;
+             mem.access( dsz, MAR, &MDR, RW, &H );
+             *pReg = MDR ;
              break;
 
       case ADDRESS_REGISTER_INDIRECT:
              // We need to access memory.
              MAR = AR[regNo];
-             mem.access( dsz );
-             *tmpReg = MDR ;
+             mem.access( dsz, MAR, &MDR, RW, &H );
+             *pReg = MDR ;
              break;
 
       case ADDRESS_REGISTER_INDIRECT_POSTINC:
              // We need to access memory.
              MAR = AR[regNo];
-             mem.access( dsz );
-             *tmpReg = MDR ;
+             mem.access( dsz, MAR, &MDR, RW, &H );
+             *pReg = MDR ;
              AR[regNo] = AR[regNo] + numBytes(dsz);
              break;
 
@@ -303,8 +268,8 @@ namespace mhs_cpp_sim68k
              // We need to access memory.
              AR[regNo] = AR[regNo] - numBytes(dsz);
              MAR = AR[regNo];
-             mem.access( dsz );
-             *tmpReg = MDR ;
+             mem.access( dsz, MAR, &MDR, RW, &H );
+             *pReg = MDR ;
              break;
 
       default: // This error should never occur, but just in case...!
@@ -317,7 +282,7 @@ namespace mhs_cpp_sim68k
   /** Generic error verification function, with message display,
       if Cond is False, display an error message (including the OpName)
       The Halt Status bit will also be set if there is an Error  */
-  bool Processor::Controller::checkCond( bool Cond, string Message )
+  bool Controller::checkCond( bool Cond, string Message )
   {
     if( Cond )
       return true ;
@@ -328,14 +293,20 @@ namespace mhs_cpp_sim68k
     return false ;
   }
 
-  // return the "number of bytes"
-  byte Processor::Controller::numBytes( dataSize Size )
+  // check the status of bit H
+  bool Controller::halt()
   {
-    return( (Size == longSize) ? 4 : (Size + 1) );
+    return H;
+  }
+
+  // return the "number of bytes"
+  byte Controller::numBytes( dataSize size )
+  {
+    return( (size == longSize) ? 4 : (size + 1) );
   }
 
   // Fetch the OpCode from memory
-  void Processor::Controller::fetchOpCode()
+  void Controller::fetchOpCode()
   {
     if( nDebugLevel > 0 )
       cout << "\nFetchOpCode(): at PC = " << dec << PC << endl;
@@ -343,12 +314,12 @@ namespace mhs_cpp_sim68k
     RW  = true ;
     MAR = PC ;
     PC += 2 ;
-    mem.access( wordSize );
+    mem.access( wordSize, MAR, &MDR, RW, &H );
     OpCode = getWord(MDR, LEAST); // get LSW from MDR
   }
 
   // Update the fields OpId, DS, numOprd, M1, R1, M2, R2 and Data according to given format
-  void Processor::Controller::decodeInstr()
+  void Controller::decodeInstr()
   {
          DS = (dataSize)getBits( OpCode,  9, 10 );
        OpId = getBits( OpCode, 11, 15 );
@@ -391,7 +362,7 @@ namespace mhs_cpp_sim68k
   }
 
   // Fetch the operands, according to their number (numOprd) & addressing modes (M1 or M2)
-  void Processor::Controller::fetchOperands()
+  void Controller::fetchOperands()
   {
     if( nDebugLevel > 0 )
       cout << "Controller::fetchOperands(" << (int)numOprd << "): at PC = " << PC-2
@@ -403,7 +374,7 @@ namespace mhs_cpp_sim68k
     if( formatF1(OpId) && (M1 == RELATIVE_ABSOLUTE) )
     {
       MAR = PC ;
-      mem.access( wordSize );
+      mem.access( wordSize, MAR, &MDR, RW, &H );
       OpAddr1 = getWord( MDR, LEAST ); // get LSW of MDR
       PC += 2 ;
     }
@@ -413,7 +384,7 @@ namespace mhs_cpp_sim68k
     if( M2 == RELATIVE_ABSOLUTE )
     {
       MAR = PC ;
-      mem.access( wordSize );
+      mem.access( wordSize, MAR, &MDR, RW, &H );
       OpAddr2 = getWord( MDR, LEAST ); // get LSW of MDR
       PC += 2 ;
     }
@@ -429,12 +400,12 @@ namespace mhs_cpp_sim68k
   }
 
   // Transfer the contents of temporary register to Register OR Memory
-  void Processor::Controller::setResult(
-                int  tmpReg,            // Source Register (TMPD...)
-                word OpAddrNo,          // Operand Address (OpAddr1...)  
-                enum dataSize dsz,      // Data Size                    
-                enum addressmode mode,  // required Addressing Mode     
-                byte RegNo            ) // Register Number for A[n] or D[n] 
+  void Controller::setResult(
+                long_68k    tmpReg,   // Source Register (TMPD...)
+                word        OpAddrNo, // Operand Address (OpAddr1...)
+                dataSize    dsz,      // Data Size
+                addressmode mode,     // required Addressing Mode
+                byte        RegNo )   // Register Number for A[n] or D[n]
   {
     RW = false ;
   
@@ -462,14 +433,14 @@ namespace mhs_cpp_sim68k
              // We need to access memory, except for branching & MOVA.
              MAR = OpAddrNo;
              MDR = tmpReg;
-             mem.access( dsz );
+             mem.access( dsz, MAR, &MDR, RW, &H );
              break;
 
       case ADDRESS_REGISTER_INDIRECT:
              // We need to access memory.
              MAR = AR[RegNo];
              MDR = tmpReg;
-             mem.access( dsz );
+             mem.access( dsz, MAR, &MDR, RW, &H );
              break;
 
       case ADDRESS_REGISTER_INDIRECT_POSTINC:
@@ -478,7 +449,7 @@ namespace mhs_cpp_sim68k
              // DO NOT increment it a 2nd time here
              MAR = AR[RegNo] - numBytes(dsz);
              MDR = tmpReg;
-             mem.access( dsz );
+             mem.access( dsz, MAR, &MDR, RW, &H );
              break;
 
       case ADDRESS_REGISTER_INDIRECT_PREDEC:
@@ -487,7 +458,7 @@ namespace mhs_cpp_sim68k
              // DO NOT decrement it a 2nd time here
              MAR = AR[RegNo];
              MDR = tmpReg;
-             mem.access( dsz );
+             mem.access( dsz, MAR, &MDR, RW, &H );
              break;
              
       default: // invalid addressMode
@@ -499,7 +470,7 @@ namespace mhs_cpp_sim68k
 
   /* Status bits Z & N are often set the same way in many instructions
      A function would be useful to do this  */
-  void Processor::Controller::setZN( int tmpReg )
+  void Controller::setZN( long_68k tmpReg )
   {
     switch( DS )
     {
@@ -523,7 +494,7 @@ namespace mhs_cpp_sim68k
 
   /* The calculations to find V & C are more complex but are simplified by the use of Sm, Dm, Rm
      It would be a good Idea to make a procedure to find these values  */
-  void Processor::Controller::setSmDmRm( int tmpSrc, int tmpDst, int tmpRes )
+  void Controller::setSmDmRm( long_68k tmpSrc, long_68k tmpDst, long_68k tmpRes )
   {
     byte mostSigBit = 15 ; // wordSize
     switch( DS )
@@ -545,7 +516,7 @@ namespace mhs_cpp_sim68k
   /********************************************************************
     The execution of each instruction is done via its micro-program
   *********************************************************************/
-  void Processor::Controller::execInstr()
+  void Controller::execInstr()
   {
     byte i ; // counter
     word tmpA ;
@@ -647,9 +618,13 @@ namespace mhs_cpp_sim68k
                 if( checkCond( (DS == longSize), "Invalid Data Size" ) )
                 {
                   fillTmpReg( &TMPS, OpAddr1, wordSize, M1, R1);
+                  if( nDebugLevel > 0 )
+                    cout << dec << __LINE__ << ": TMPS = $" << hex << TMPS << endl;
                   if( checkCond( (TMPS != 0), "Division by Zero" ) )
                   {
                     fillTmpReg( &TMPD, OpAddr2, DS, M2, R2 );
+                    if( nDebugLevel > 0 )
+                      cout << dec << __LINE__ << ": TMPD = $" << hex << TMPD << endl;
                     V = ( (TMPD / TMPS) < -32768 ) | ( (TMPD / TMPS) > 32767 );
                     if( TMPS > 0x8000 )
                     {
@@ -657,19 +632,31 @@ namespace mhs_cpp_sim68k
                       TMPS = (TMPS ^ 0xFFFF) + 1;
                       TMPD = (TMPD ^ 0xFFFFFFFF) + 1;
                     };
+                    if( nDebugLevel > 0 )
+                      cout << dec << __LINE__ << ": TMPS = $" << hex << TMPS << "; TMPD = $" << TMPD << endl;
                     if( ((TMPD / TMPS) == 0) && (i == 1) )
                     {
                       setWord( &TMPR, LEAST, 0 );
+                      if( nDebugLevel > 0 )
+                        cout << dec << __LINE__ << ": TMPR = $" << hex << TMPR << endl;
                       TMPD = (TMPD ^ 0xFFFFFFFF) + 1 ;
+                      if( nDebugLevel > 0 )
+                        cout << dec << __LINE__ << ": TMPD = $" << hex << TMPD << endl;
                       setWord( &TMPR, MOST, TMPD % TMPS );
+                      if( nDebugLevel > 0 )
+                        cout << dec << __LINE__ << ": TMPR = $" << hex << TMPR << endl;
                     }
                     else
                       {
                         TMPR = TMPD / getWord(TMPS, LEAST);
+                        if( nDebugLevel > 0 )
+                          cout << dec << __LINE__ << ": TMPR = $" << hex << TMPR << endl;
                         setWord( &TMPR, MOST, (TMPD % getWord(TMPS, LEAST)) );
+                        if( nDebugLevel > 0 )
+                          cout << dec << __LINE__ << ": TMPR = $" << hex << TMPR << endl;
                       };
                     if( nDebugLevel > 0 )
-                      cout << "TMPR($" << TMPR << ") = TMPD($" << TMPD << ") / TMPS($" << TMPS << ")" << endl;
+                      cout << dec << __LINE__ << ": TMPR($" << hex << TMPR << ") = TMPD($" << TMPD << ") / TMPS($" << TMPS << ")" << endl;
                     setZN( TMPR );
                     C = false ;
                     setResult( TMPR, OpAddr2, DS, M2, R2 );
@@ -983,7 +970,7 @@ namespace mhs_cpp_sim68k
   }
 
   // Determines the format of the instruction: return True if F1, False if F2
-  bool Processor::Controller::formatF1( byte opid )
+  bool Controller::formatF1( byte opid )
   {
     if( (opid == iADDQ) || (opid == iSUBQ) || ((opid >= iLSL) && (opid <= iROR)) || (opid == iMOVQ) )
       return false ;
@@ -1041,11 +1028,11 @@ namespace mhs_cpp_sim68k
       ctrl.fetchOpCode();
       ctrl.decodeInstr();
       ctrl.fetchOperands();
-      if( !H )
+      if( !ctrl.halt() )
 //        break;
         ctrl.execInstr();
     }
-    while( !H );
+    while( !ctrl.halt() );
 
     cout << endl << "\tEnd of Fetch-Execute Cycle" << endl;
   }
@@ -1061,12 +1048,13 @@ int main( int argc, char* argv[] )
 {
   char option = '0' ; // option chosen from the menu by the user
   string input ;
+  long_68k t;
   
   if( argc > 1 )
     nDebugLevel = strtol( argv[1], (char**)NULL, 0 );
   
   // info on system data sizes
-  if( nDebugLevel > 1 )
+  if( nDebugLevel > 0 )
   {
     cout << "sizeof( bool ) == " << sizeof(bool) << endl;
     cout << "sizeof( char ) == " << sizeof(char) << endl;
@@ -1079,6 +1067,7 @@ int main( int argc, char* argv[] )
     cout << "sizeof( addressmode ) == " << sizeof(enum addressmode) << endl;
     cout << "sizeof( byte ) == " << sizeof(byte) << endl;
     cout << "sizeof( word ) == " << sizeof(word) << endl;
+    cout << "sizeof( long_68k ) == " << sizeof(long_68k) << endl;
     cout << "sizeof( string ) == " << sizeof(string) << endl;
   }
 
@@ -1092,12 +1081,8 @@ int main( int argc, char* argv[] )
     // get a character
     cin >> option ;
     // flush all the rest
-    cin.ignore(256, '\n');
+    cin.ignore(1024, '\n');
 
-    if( option != QUIT  &&  option != EXECUTE ) {
-      cout << "\nYour input '" << option << "' was NOT acceptable. Please try again." << endl;
-      continue ;
-    }
     switch( option )
     {
       case EXECUTE :
@@ -1109,15 +1094,23 @@ int main( int argc, char* argv[] )
                       proc.start();
                     }
                     else
-                        cout << "\nYour input '" << input << "' was NOT acceptable. Please try again." << endl;
+                        cout << "\nFile '" << input << "' could NOT be found." << endl;
+                        cin.ignore(1024, '\n');
                     break;
                     
-      case QUIT : cout << "Bye!" << endl;
-                  break;
+      case TEST :
+                 t = 0xFFFFFFFF ;
+                 printf("t == %#x ; %d\n\n", t, t);
+                 t = 0x7FFFFFFF ;
+                 printf("t == %#x ; %d\n\n", t, t);
+
+      case QUIT :
+                 cout << "Bye!" << endl;
+                 break;
                   
       case EOL : break;
       
-      default: cout << "Invalid Option. Please enter '" << EXECUTE << "' or '" << QUIT << "'" << endl;
+      default: cout << "Invalid Option. Please enter '" << EXECUTE << "' or '" << QUIT << "'." << endl;
     }
   }
   cout << "\tPROGRAM ENDED" << endl;
