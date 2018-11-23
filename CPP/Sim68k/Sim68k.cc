@@ -2,6 +2,7 @@
  * Sim68k.cc
  *   Ported from Sim68k.pas - a Pascal program originally created in Nov 1999 for CSI2111
  *                          - simulates the actions of the Motorola 68000 microprocessor
+ *
  *   Author: Mark Sattolo <epistemik@gmail.com>
  * ------------------------------------------------------------------------------------------------------
  *   $File: //depot/Eclipse/CPP/Workspace/Sim68k/src/Sim68k.c $
@@ -124,24 +125,23 @@ namespace mhs_cpp_sim68k
     return true ;
   }
 
+  // load the binary program to memory
   void Memory::load( byte location, byte data )
   {
     if( nDebugLevel > 2 )
       cout << "Memory::load(): Read value $" << hex << (int)data
            << " into memory at location: " << dec << (int)location << endl;
+
     memory[location] = data ;
   }
 
-  /* Copies an element (Byte, Word, Long) from memory\CPU to CPU\memory.
-     Verifies if we are trying to access an address outside the range allowed for addressing [0x0000..0x1000].
-     Uses the RW (read|write) bit.
-     Parameter dsz determines the data size (byte, word, long)  */
+  // Copies an element (Byte, Word, Long) from memory\CPU to CPU\memory
   void Memory::access( dataSize dsz, word MAR, long_68k* pMDR, bit RW, bit* pH )
   {
     cout.setf(ios_base::hex, ios_base::basefield);
 
 //      MAR = 0x1001 ; // debug
-    if( (MAR >= 0) && (MAR < memorySize) ) // valid Memory Address range
+    if( MAR < memorySize ) // valid Memory Address range
     {
       if( RW ) // Read = copy an element from memory to CPU
       {
@@ -211,13 +211,6 @@ namespace mhs_cpp_sim68k
       }
   }
 
-  /****************************************************************************
-    Since many instructions will make local fetches between temporary registers
-    (TMPS, TMPD, TMPR) & memory or the Dn & An registers it would be
-    useful to create procedures to transfer the words/bytes between them.
-    Here are 2 suggestions of procedures to do this.
-  *****************************************************************************/
-
   // Transfer data to the specified temporary register
   void Controller::fillTmpReg(
                    long_68k*   pReg,     // tmp Register to modify - TMPS, TMPD or TMPR
@@ -279,9 +272,7 @@ namespace mhs_cpp_sim68k
     }// switch mode
   }
 
-  /** Generic error verification function, with message display,
-      if Cond is False, display an error message (including the OpName)
-      The Halt Status bit will also be set if there is an Error  */
+  // Generic error verification function, with message display
   bool Controller::checkCond( bool Cond, string Message )
   {
     if( Cond )
@@ -299,7 +290,7 @@ namespace mhs_cpp_sim68k
     return H;
   }
 
-  // return the "number of bytes"
+  // return the current data size
   byte Controller::numBytes( dataSize size )
   {
     return( (size == longSize) ? 4 : (size + 1) );
@@ -468,8 +459,7 @@ namespace mhs_cpp_sim68k
     }
   }
 
-  /* Status bits Z & N are often set the same way in many instructions
-     A function would be useful to do this  */
+  // set Status bits Z & N
   void Controller::setZN( long_68k tmpReg )
   {
     switch( DS )
@@ -492,8 +482,7 @@ namespace mhs_cpp_sim68k
     }
   }
 
-  /* The calculations to find V & C are more complex but are simplified by the use of Sm, Dm, Rm
-     It would be a good Idea to make a procedure to find these values  */
+  // The calculations for V & C are easier with these values
   void Controller::setSmDmRm( long_68k tmpSrc, long_68k tmpDst, long_68k tmpRes )
   {
     byte mostSigBit = 15 ; // wordSize
@@ -513,9 +502,7 @@ namespace mhs_cpp_sim68k
     Rm = ( getBits(tmpRes, mostSigBit, mostSigBit) == 1 );
   }
 
-  /********************************************************************
-    The execution of each instruction is done via its micro-program
-  *********************************************************************/
+  //  The execution of each instruction is done via its micro-program
   void Controller::execInstr()
   {
     byte i ; // counter
@@ -910,19 +897,22 @@ namespace mhs_cpp_sim68k
                cout << ": " ;
                cin >> input ;
                if( nDebugLevel > 0) {
-                 cout << dec << __LINE__ << ": input == " << hex << input << endl;
-                 cout << dec << __LINE__ << ": input.c_str() == " << hex << input.c_str() << endl;
+                 cout << dec << __LINE__ << ": input == $" << hex << input << endl;
+                 cout << dec << __LINE__ << ": input.c_str() == $" << hex << input.c_str() << endl;
                  cout << dec << __LINE__ << ": strtol( input.c_str(), (char**)NULL, 0 ) == $"
                       << hex << strtol( input.c_str(), (char**)NULL, 0 ) << endl;
-                 cout << dec << __LINE__ << ": strtoul( input.c_str(), (char**)NULL, 0 ) == $"
-                      << hex << strtoul( input.c_str(), (char**)NULL, 0 ) << endl;
+                 cout << dec << __LINE__ << ": strtoull( input.c_str(), (char**)NULL, 0 ) == $"
+                      << hex << strtoull( input.c_str(), (char**)NULL, 0 ) << endl;
                }
                /*
                 * On Windows, where the size of long is 4 bytes, even on my Windows 10 x64 laptop,
-                * strtol() evaluates string "0xFFFFFFFF" as long 0x7FFFFFFF!!
-                * Using strtoul() seems to work, so far, for both platforms...
+                * strtol() evaluates string "0xFFFFFFFF" to long_68k 0x7FFFFFFF!!
+                * Use strtoull() to ensure the maximum size to store our input without problems interpreting sign.
+                * Seems to work, so far, for both Linux x86_64 and Windows x64...
                 */
-               TMPD = (long_68k)strtoul( input.c_str(), (char**)NULL, 0 );
+               TMPD = (long_68k)strtoull( input.c_str(), (char**)NULL, 0 );
+               if( nDebugLevel > 0)
+                 cout << dec << __LINE__ << ": TMPD == $" << hex << TMPD << endl;
                setZN( TMPD );
                C = false;
                V = false;
@@ -991,8 +981,7 @@ namespace mhs_cpp_sim68k
     return true ;
   }
 
-  /* Initializes Mnemo with strings corresponding to each instruction
-     - to have a more useful display of each opCode  */
+  // Initialize Mnemo with strings corresponding to each instruction
   void Processor::MnemoInit()
   {
     Mnemo[iADD]   = "ADD";
@@ -1068,25 +1057,6 @@ int main( int argc, char* argv[] )
     nDebugLevel = strtol( argv[1], (char**)NULL, 0 );
   cout << "nDebugLevel == " << nDebugLevel << endl;
   
-  // info on system data sizes
-  if( nDebugLevel > 0 )
-  {
-    cout << "sizeof( bool ) == " << sizeof(bool) << endl;
-    cout << "sizeof( char ) == " << sizeof(char) << endl;
-    cout << "sizeof( short ) == " << sizeof(short) << endl;
-    cout << "sizeof( int ) == " << sizeof(int) << endl;
-    cout << "sizeof( long ) == " << sizeof(long) << endl;
-    cout << "sizeof( long long ) == " << sizeof(long long) << endl;
-    cout << "sizeof( bit ) == " << sizeof(bit) << endl;
-    cout << "sizeof( twobits ) == " << sizeof(enum twobits) << endl;
-    cout << "sizeof( dataSize ) == " << sizeof(enum dataSize) << endl;
-    cout << "sizeof( addressmode ) == " << sizeof(enum addressmode) << endl;
-    cout << "sizeof( byte ) == " << sizeof(byte) << endl;
-    cout << "sizeof( word ) == " << sizeof(word) << endl;
-    cout << "sizeof( long_68k ) == " << sizeof(long_68k) << endl;
-    cout << "sizeof( string ) == " << sizeof(string) << endl;
-  }
-
   Processor proc;
 
   // Menu 
@@ -1117,6 +1087,22 @@ int main( int argc, char* argv[] )
                     break;
                     
       case TEST :
+                // info on system data sizes
+                cout << "sizeof( bool ) == " << sizeof(bool) << endl;
+                cout << "sizeof( char ) == " << sizeof(char) << endl;
+                cout << "sizeof( short ) == " << sizeof(short) << endl;
+                cout << "sizeof( int ) == " << sizeof(int) << endl;
+                cout << "sizeof( long ) == " << sizeof(long) << endl;
+                cout << "sizeof( long long ) == " << sizeof(long long) << endl;
+                cout << "sizeof( bit ) == " << sizeof(bit) << endl;
+                cout << "sizeof( twobits ) == " << sizeof(enum twobits) << endl;
+                cout << "sizeof( dataSize ) == " << sizeof(enum dataSize) << endl;
+                cout << "sizeof( addressmode ) == " << sizeof(enum addressmode) << endl;
+                cout << "sizeof( byte ) == " << sizeof(byte) << endl;
+                cout << "sizeof( word ) == " << sizeof(word) << endl;
+                cout << "sizeof( long_68k ) == " << sizeof(long_68k) << endl;
+                cout << "sizeof( string ) == " << sizeof(string) << endl << endl;
+
                  t = 0xFFFFFFFF ;
                  cout << "long_68k t = 0xFFFFFFFF == $" << hex << t << " ; " << dec << t << endl;
                  st = "0xFFFFFFFF" ;

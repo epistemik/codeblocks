@@ -2,6 +2,7 @@
  * SimUnit.hh
  *   Ported from SimUnit.pas
  *     - a library of Pascal functions & procedures originally created in Nov 1999 for CSI2111
+ *
  *   Author: Mark Sattolo <epistemik@gmail.com>
  * ------------------------------------------------------------------------------------------------------
  *   $File: //depot/Eclipse/CPP/Workspace/Sim68k/src/SimUnit.h $
@@ -68,14 +69,8 @@ namespace mhs_cpp_sim68k
   #define iDSR   30  // Display the contents of the Status bits
   #define iHLT   31  // HALT
 
-  #define READ   true
-  #define WRITE  false
   #define LEAST  false
   #define MOST   true
-
-  #define trD  0  // Tmp Register D
-  #define trR  1  // Tmp Register R
-  #define trS  2  // Tmp Register S
 
   typedef  bool  bit ;
   string  bitValue[] = { "FALSE", "TRUE" };
@@ -91,9 +86,10 @@ namespace mhs_cpp_sim68k
   typedef  unsigned short  word ;
 
   // long = 0x0..0xFFFFFFFF = 0x80000000..0x7FFFFFFF in 2's CF
-  // C/C++ long is 8 bytes on Linux x86_64 but 4 bytes on Windows x86_64
-  // int is unsigned on Linux but signed on Windows (in general...?)
-  // need a typedef to ensure the longSize we are using for 68k is unsigned
+  // C/C++ long is 8 bytes on Linux x86_64 but only 4 bytes on Windows x64
+  // int is 4 bytes on both platforms, in general...?
+  // need a signed value for this type to work properly
+  // use a typedef to ensure the long_68k type we are using is signed
   typedef signed int long_68k ;
 
   enum dataSize    { byteSize, wordSize, longSize }; // 68k long = 4 bytes
@@ -109,7 +105,7 @@ namespace mhs_cpp_sim68k
                      ADDRESS_REGISTER_INDIRECT_PREDEC
                    };
 
-  const word memorySize = 4097 ; // hex values 0x0000 to 0x1000
+  const word memorySize = 0x1001 ; // hex values 0x0000 to 0x1000
 
   string Mnemo[ iHLT + 1 ]; // Mnemonic string for opCodes
 
@@ -127,7 +123,7 @@ namespace mhs_cpp_sim68k
   
   ****************************************************************************/
   
-  /* Returns a substring of bits between FirstBit and LastBit from V
+  /* Returns a substring of bits between FirstBit and LastBit from wV
      Ex:                    1111 11
         Bit Positions:      5432 1098 7654 3210
         wV = 0x1234    (or %0001 0010 0011 0100)
@@ -139,7 +135,7 @@ namespace mhs_cpp_sim68k
     return( (wV >> FirstBit) & ((2<<(LastBit-FirstBit)) - 1) );
   }
   
-  // Gets one word from V
+  // Gets one word from nV
   // MSW: false = Least Significant Word, true = Most Significant Word
   word getWord( const long_68k nV, bit MSW )
   {
@@ -149,21 +145,21 @@ namespace mhs_cpp_sim68k
     return( nV & 0x0000FFFF );
   }
 
-  // Sets the bit of V indicated by posn to val (false or true)
+  // Sets the bit of pnV indicated by posn to val (false or true)
   void setBit( long_68k* pnV, const byte posn, const bit val )
   {
     *pnV = ( (*pnV & (0xFFFFFFFF - (1 << posn))) | (val << posn) );
   }
 
-  // Sets the bits of V between first and fast to the least significant bits of Value
+  // Sets the bits of pnV between first and fast to the least significant bits of val
   void setBits( long_68k* pnV, const byte first, const byte last, const int val )
   {
     int pos ;
-    for( pos=first; pos <= last; pos++ )
+    for( pos = first; pos <= last; pos++ )
       setBit( pnV, pos, (getBits(val, pos-first, pos-first) == 1) );
   }
 
-  // Sets one byte of V indicated by posn to val
+  // Sets one byte of pnV indicated by posn to val
   void setByte( long_68k* pnV, const twobits posn, const byte val )
   {
     switch( posn )
@@ -175,7 +171,7 @@ namespace mhs_cpp_sim68k
     }
   }
 
-  // Sets one word of V indicated by MSW to Value
+  // Sets one word of pnV indicated by MSW to val
   void setWord( long_68k* pnV, const bit MSW, const word val )
   {
     if( MSW )
@@ -217,15 +213,16 @@ namespace mhs_cpp_sim68k
     public:
       /// Constructor
       Controller(Memory mry)
-        : mem(mry), PC(0), OpCode(0), OpAddr1(0), OpAddr2(0), TMPD(0), TMPR(0), TMPS(0),
+        : mem(mry), PC(0), OpCode(0), OpAddr1(0), OpAddr2(0), TMPD(0), TMPS(0), TMPR(0),
           C(false), V(false), Z(false), N(false), H(false), MAR(0), MDR(0), RW(false),
           DS(byteSize), OpId(0), numOprd(0), opcData(0), R1(0), R2(0),
           M1(DATA_REGISTER_DIRECT), M2(DATA_REGISTER_DIRECT), Sm(false), Dm(false), Rm(false)
       { }
 
-      // Generic error verification function, with message display,
-      // if Cond is False, display an error message (including the OpName)
-      // The Halt Status bit will also be set if there is an Error.
+      /**  Generic error verification function, with message display,
+        *  if Cond is False, display an error message (including the OpName)
+        *  The Halt Status bit will also be set if there is an Error
+        */
       bool checkCond(bool, string);
 
       // check the status of bit H
@@ -255,6 +252,13 @@ namespace mhs_cpp_sim68k
       // It would be a good Idea to make a procedure to find these values
       void setSmDmRm(const long_68k, const long_68k, const long_68k);
 
+      /****************************************************************************
+        Since many instructions will make local fetches between temporary registers
+        (TMPS, TMPD, TMPR) & memory or the Dn & An registers it would be
+        useful to create procedures to transfer the words/bytes between them.
+        Here are 2 suggestions of procedures to do this.
+      *****************************************************************************/
+
       // Transfer data in the required temporary register
       void fillTmpReg( long_68k*   ,  // tmp Register to modify - TMPS, TMPD or TMPR
                        word        ,  // address of Operand (OpAddr1 | OpAddr2), for addressMode 3
@@ -269,7 +273,7 @@ namespace mhs_cpp_sim68k
                       addressmode ,  // required Addressing Mode
                       byte        ); // Register Number for A[n] or D[n]
 
-      ///  The execution of each instruction is done via its micro-program
+      /// The execution of each instruction is done via its micro-program
       void execInstr();
 
     private:
@@ -280,7 +284,7 @@ namespace mhs_cpp_sim68k
       word OpCode ;           // OPCODE of the current instruction
       word OpAddr1, OpAddr2 ; // Operand Addresses
 
-      long_68k TMPD, TMPR, TMPS ;  // Temporary Registers D, R, S
+      long_68k TMPD, TMPS, TMPR ;  // Temporary Registers Dest, Src, Result
 
       // status bits
       bit C ; // Carry
