@@ -13,7 +13,7 @@
 #include "SimUnit.hh" // Library containing useful functions
 #include <fstream>
 #include <sstream>
-#include <unistd.h>  // for sleep()
+#include <unistd.h>  // for usleep()
 
 namespace mhs_cpp_sim68k
 {
@@ -29,7 +29,7 @@ namespace mhs_cpp_sim68k
     string hex1, hex2 ;
     long hexVal = 0 ;
 
-    string msg ; // error handling
+    string mesg ; // error handling
 
     string inputFolder = "/home/marksa/dev/CodeBlocks/Cproj/Sim68k/in/" ;
     string filename = inputFolder + input ;
@@ -39,8 +39,8 @@ namespace mhs_cpp_sim68k
       ifstream inputfile( filename.c_str() );
       if( !inputfile )
       {
-        msg = string( "\nError occurred trying to open file: " ) + string( filename );
-        throw msg ;
+        mesg = string( "\nError occurred trying to open file: " ) + string( filename );
+        throw mesg ;
       }
       else
           cout << "Processing file '" << filename << "'" << endl;
@@ -106,15 +106,15 @@ namespace mhs_cpp_sim68k
     catch( string& msg )
     {
       cout.flush();
-      sleep( 1 ); // let any cout finish
+      usleep( 1001 ); // let any cout finish
       cerr << msg << "\n" << endl;
-      sleep( 2 );
+      usleep( 2002 );
       return false ;
     }
     catch(...)
     {
       cout.flush();
-      sleep( 1 ); // let any cout finish
+      usleep( 1001 ); // let any cout finish
       cerr << "UNSPECIFIED ERROR!" << endl;
       return false ;
     }
@@ -909,7 +909,20 @@ namespace mhs_cpp_sim68k
                }
                cout << ": " ;
                cin >> input ;
-               TMPD = (int)strtol( input.c_str(), (char**)NULL, 0 );
+               if( nDebugLevel > 0) {
+                 cout << dec << __LINE__ << ": input == " << hex << input << endl;
+                 cout << dec << __LINE__ << ": input.c_str() == " << hex << input.c_str() << endl;
+                 cout << dec << __LINE__ << ": strtol( input.c_str(), (char**)NULL, 0 ) == $"
+                      << hex << strtol( input.c_str(), (char**)NULL, 0 ) << endl;
+                 cout << dec << __LINE__ << ": strtoul( input.c_str(), (char**)NULL, 0 ) == $"
+                      << hex << strtoul( input.c_str(), (char**)NULL, 0 ) << endl;
+               }
+               /*
+                * On Windows, where the size of long is 4 bytes, even on my Windows 10 x64 laptop,
+                * strtol() evaluates string "0xFFFFFFFF" as long 0x7FFFFFFF!!
+                * Using strtoul() seems to work, so far, for both platforms...
+                */
+               TMPD = (long_68k)strtoul( input.c_str(), (char**)NULL, 0 );
                setZN( TMPD );
                C = false;
                V = false;
@@ -1049,9 +1062,11 @@ int main( int argc, char* argv[] )
   char option = '0' ; // option chosen from the menu by the user
   string input ;
   long_68k t;
+  string st;
   
   if( argc > 1 )
     nDebugLevel = strtol( argv[1], (char**)NULL, 0 );
+  cout << "nDebugLevel == " << nDebugLevel << endl;
   
   // info on system data sizes
   if( nDebugLevel > 0 )
@@ -1061,6 +1076,7 @@ int main( int argc, char* argv[] )
     cout << "sizeof( short ) == " << sizeof(short) << endl;
     cout << "sizeof( int ) == " << sizeof(int) << endl;
     cout << "sizeof( long ) == " << sizeof(long) << endl;
+    cout << "sizeof( long long ) == " << sizeof(long long) << endl;
     cout << "sizeof( bit ) == " << sizeof(bit) << endl;
     cout << "sizeof( twobits ) == " << sizeof(enum twobits) << endl;
     cout << "sizeof( dataSize ) == " << sizeof(enum dataSize) << endl;
@@ -1089,20 +1105,31 @@ int main( int argc, char* argv[] )
                     // execution on the simulator
                     cout << "Name of the 68k binary program ('.68b' will be added automatically): " << endl;
                     cin >> input ;
+
                     if( proc.loadProgram(input + ".68b") ) {
                       // Start the processor
                       proc.start();
                     }
-                    else
+                    else {
                         cout << "\nFile '" << input << "' could NOT be found." << endl;
                         cin.ignore(1024, '\n');
+                    }
                     break;
                     
       case TEST :
                  t = 0xFFFFFFFF ;
-                 printf("t == %#x ; %d\n\n", t, t);
-                 t = 0x7FFFFFFF ;
-                 printf("t == %#x ; %d\n\n", t, t);
+                 cout << "long_68k t = 0xFFFFFFFF == $" << hex << t << " ; " << dec << t << endl;
+                 st = "0xFFFFFFFF" ;
+                 cout << "string st == " << st << endl;
+                 cout << "st.c_str() == " << st.c_str() << endl;
+                 t = (long_68k)strtol( st.c_str(), (char**)NULL, 0 );
+                 cout << "t = (long_68k)strtol(st) == $" << hex << t << endl;
+                 t = (long_68k)strtoul( st.c_str(), (char**)NULL, 0 );
+                 cout << "t = (long_68k)strtoul(st) == $" << hex << t << endl;
+                 t = (long_68k)strtoll( st.c_str(), (char**)NULL, 0 );
+                 cout << "t = (long_68k)strtoll(st) == $" << hex << t << endl;
+                 t = (long_68k)strtoull( st.c_str(), (char**)NULL, 0 );
+                 cout << "t = (long_68k)strtoull(st) == $" << hex << t << endl;
 
       case QUIT :
                  cout << "Bye!" << endl;
