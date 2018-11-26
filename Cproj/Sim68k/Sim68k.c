@@ -824,7 +824,7 @@ void ExecInstr()
 //               scanf( "%x", &TMPD );
                // have to distinguish between hex and decimal input
                scanf( "%s", input );
-               TMPD = (int)strtol(input, (char**)NULL, 0);
+               TMPD = (int)strtoull(input, (char**)NULL, 0);
                SetZN( TMPD );
                C = False;
                V = False;
