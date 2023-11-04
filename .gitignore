@@ -1,20 +1,15 @@
 .*
 !.gitignore
 **/bin
-**/javadoc*
 **/logs
 **/BAK
 /screenshots
 **/consoles
 **/docs/
-*.jardesc
 *.out
 **/test*
 **/out
-sounds
-IntelliJIDEA
 savedGames
 home
-csi2111
-*-Sim68k
+**/csi2111*
 
